@@ -1,54 +1,46 @@
+/**
+ * Configuração da conexão com o banco de dados
+ * Exporta uma instância do Knex configurada com base no ambiente
+ */
+
 import dotenv from 'dotenv';
+import knex from 'knex';
+// @ts-ignore
+const config = require('../../knexfile');
 
 dotenv.config();
 
-// Interface para configuração da conexão com banco de dados
-export interface DatabaseConfig {
-  host: string;
-  port: number;
-  database: string;
-  username?: string;
-  password?: string;
-}
+// Determina o ambiente com base na variável NODE_ENV
+const environment = process.env.NODE_ENV || 'development';
 
-// Obtém a configuração do banco de dados a partir das variáveis de ambiente
-export const getDatabaseConfig = (): DatabaseConfig => {
-  const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/estoque-medicamentos';
-  
-  // Verifica se a URI do MongoDB está no formato padrão
-  const match = mongoUri.match(/mongodb:\/\/(?:([^:]+):([^@]+)@)?([^:]+)(?::(\d+))?\/(.+)/);
-  
-  if (match) {
-    const [, username, password, host, port, database] = match;
-    
-    return {
-      host,
-      port: port ? parseInt(port, 10) : 27017,
-      database,
-      username,
-      password
-    };
-  }
-  
-  // Configuração padrão
-  return {
-    host: 'localhost',
-    port: 27017,
-    database: 'estoque-medicamentos'
-  };
-};
-
-// Função de inicialização da conexão com o banco de dados
-// Esta função seria substituída pela configuração do mecanismo de migrations
+// Função para inicializar conexão com o banco de dados
 const connectDB = async (): Promise<void> => {
   try {
-    const config = getDatabaseConfig();
-    console.log(`Configuração de banco de dados carregada para ${config.database}`);
-    // Aqui seria implementada a conexão com o banco de dados usando migrations
+    // Obtém a configuração para o ambiente atual
+    const knexConfig = config[environment];
+    
+    if (!knexConfig) {
+      throw new Error(`Configuração para ambiente "${environment}" não encontrada`);
+    }
+    
+    console.log(`Conectando ao banco de dados "${knexConfig.connection.database}" no ambiente "${environment}"`);
+    
+    // Inicializa a conexão com o banco de dados
+    const db = knex(knexConfig);
+    
+    // Testa a conexão
+    await db.raw('SELECT 1');
+    console.log('Conexão com o banco de dados estabelecida com sucesso!');
+    
+    return Promise.resolve();
   } catch (error: any) {
-    console.error(`Erro na configuração do banco de dados: ${error.message}`);
-    process.exit(1);
+    console.error('Erro ao conectar com o banco de dados:', error.message);
+    return Promise.reject(error);
   }
 };
 
-export default connectDB; 
+// Exporta a função de conexão
+export default connectDB;
+
+// Cria e exporta a instância do Knex
+export const db = knex(config[environment]); 
