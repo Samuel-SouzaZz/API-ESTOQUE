@@ -55,4 +55,9 @@ temp/
 .docker/
 .git/
 **/*.min.js
-**/*.min.css 
+**/*.min.css
+
+# SQLite
+*.sqlite
+*.sqlite3
+*.db 

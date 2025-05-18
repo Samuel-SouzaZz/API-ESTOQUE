@@ -3,15 +3,13 @@
  */
 exports.up = function(knex) {
   return knex.schema.createTable('estoque', function(table) {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
-    table.string('local').notNullable();
-    table.uuid('lote_id').notNullable().references('id').inTable('lotes');
-    table.integer('quantidade').notNullable().defaultTo(0);
-    table.timestamps(true, true); // created_at e updated_at
-    
-    // Índices para otimização
-    table.index('lote_id');
-    table.index('local');
+    table.increments('id').primary();
+    table.integer('medicamento_id').unsigned().references('id').inTable('medicamentos');
+    table.integer('lote_id').unsigned().references('id').inTable('lotes');
+    table.integer('quantidade_disponivel').unsigned().notNullable().defaultTo(0);
+    table.integer('quantidade_minima').unsigned().defaultTo(10);
+    table.string('localizacao');
+    table.timestamps(true, true);
   });
 };
 

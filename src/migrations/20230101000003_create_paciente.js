@@ -3,8 +3,10 @@
  */
 exports.up = function(knex) {
   return knex.schema.createTable('pacientes', function(table) {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    table.increments('id').primary();
     table.string('nome').notNullable();
+    table.string('cpf').notNullable();
+    table.string('telefone');
     table.timestamps(true, true); // created_at e updated_at
   });
 };

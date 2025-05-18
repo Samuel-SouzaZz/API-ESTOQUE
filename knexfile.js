@@ -9,14 +9,11 @@ require('dotenv').config();
 module.exports = {
   // Ambiente de desenvolvimento
   development: {
-    client: 'pg', // PostgreSQL
+    client: 'sqlite3',
     connection: {
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'estoque_medicamentos_dev',
-      charset: 'utf8'
+      filename: './dev.sqlite3'
     },
+    useNullAsDefault: true,
     migrations: {
       directory: './src/migrations'
     },
@@ -27,16 +24,6 @@ module.exports = {
       min: 2,
       max: 10
     },
-    // Habilita o uso de UUIDs no PostgreSQL
-    postProcessResponse: (result) => {
-      return result;
-    },
-    wrapIdentifier: (value, origImpl) => {
-      return origImpl(value);
-    },
-    // Habilita extensão uuid-ossp para geração de UUIDs no PostgreSQL
-    // Esta linha deve ser executada no banco manualmente:
-    // CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     debug: process.env.NODE_ENV === 'development'
   },
 

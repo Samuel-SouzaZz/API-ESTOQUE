@@ -4,7 +4,7 @@
 ![Versão](https://img.shields.io/badge/versão-1.0.0-blue)
 ![Licença](https://img.shields.io/badge/licença-MIT-green)
 
-Uma API REST moderna para gerenciamento completo de estoque de medicamentos em ambientes hospitalares e farmacêuticos, desenvolvida com TypeScript, Express e PostgreSQL.
+Uma API REST moderna para gerenciamento completo de estoque de medicamentos em ambientes hospitalares e farmacêuticos, desenvolvida com TypeScript, Express e suporte para SQLite (desenvolvimento) e PostgreSQL (produção).
 
 ## 📋 Sobre o Projeto
 
@@ -81,7 +81,7 @@ src/
 ## 🚀 Tecnologias
 
 - **Backend**: Node.js, Express, TypeScript
-- **Banco de Dados**: PostgreSQL
+- **Banco de Dados**: SQLite (desenvolvimento), PostgreSQL (produção)
 - **ORM/Query Builder**: Knex.js
 - **Gerenciamento de Dependências**: npm
 
@@ -118,7 +118,7 @@ src/
 ## 🛠️ Requisitos
 
 - Node.js (v14+)
-- PostgreSQL (v12+)
+- PostgreSQL (v12+) para ambiente de produção
 - npm ou yarn
 
 ## ⚙️ Instalação e Configuração
@@ -145,14 +145,20 @@ Configure as variáveis no arquivo `.env`:
 PORT=5000
 NODE_ENV=development
 
-# Configurações do banco de dados
+# Configurações do banco de dados - Desenvolvimento (SQLite é usado por padrão)
 DB_HOST=localhost
-DB_USER=seu_usuario
-DB_PASSWORD=sua_senha
+DB_USER=postgres
+DB_PASSWORD=postgres
 DB_NAME=estoque_medicamentos_dev
+
+# Configurações do banco de dados - Produção
+PROD_DB_HOST=seu_host
+PROD_DB_USER=seu_usuario
+PROD_DB_PASSWORD=sua_senha
+PROD_DB_NAME=estoque_medicamentos_prod
 ```
 
-Crie o banco de dados e habilite a extensão UUID:
+Para PostgreSQL, crie o banco de dados e habilite a extensão UUID:
 ```sql
 CREATE DATABASE estoque_medicamentos_dev;
 \c estoque_medicamentos_dev

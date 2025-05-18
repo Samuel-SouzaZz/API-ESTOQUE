@@ -3,15 +3,13 @@
  */
 exports.up = function(knex) {
   return knex.schema.createTable('medicamentos', function(table) {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    table.increments('id').primary();
     table.string('nome').notNullable();
-    table.uuid('fornecedor_id').references('id').inTable('fornecedores');
-    table.enum('tarja', ['SEM_TARJA', 'AMARELA', 'VERMELHA', 'PRETA']).defaultTo('SEM_TARJA');
-    table.timestamps(true, true); // created_at e updated_at
-    
-    // Índices para otimização
-    table.index('nome');
-    table.index('fornecedor_id');
+    table.string('principio_ativo').notNullable();
+    table.string('dosagem');
+    table.string('forma_farmaceutica');
+    table.integer('fornecedor_id').unsigned().references('id').inTable('fornecedores');
+    table.timestamps(true, true);
   });
 };
 

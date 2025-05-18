@@ -3,8 +3,10 @@
  */
 exports.up = function(knex) {
   return knex.schema.createTable('medicos', function(table) {
-    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    table.increments('id').primary();
     table.string('nome').notNullable();
+    table.string('crm').notNullable();
+    table.string('especialidade');
     table.timestamps(true, true); // created_at e updated_at
   });
 };
