@@ -4,9 +4,9 @@ export interface ILote {
   dataFabricacao: Date;
   dataValidade: Date;
   codigo: string;
-  produtoId: string;
+  produtoId: string; // Trocar (MadicamentoID)
   quantidade: number;
-  fornecedorId: string;
+  fornecedorId: string; // Remover.
   observacoes?: string;
   createdAt: Date;
   updatedAt: Date;
