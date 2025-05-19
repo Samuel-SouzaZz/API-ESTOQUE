@@ -1,12 +1,9 @@
-// Arquivo de configuração do Knex.js
-// Define as configurações de conexão com o banco de dados para diferentes ambientes
+import dotenv from 'dotenv';
+import type { Knex } from 'knex';
 
-require('dotenv').config();
+dotenv.config();
 
-/**
- * @type { Object.<string, import("knex").Knex.Config> }
- */
-module.exports = {
+const config: { [key: string]: Knex.Config } = {
   // Ambiente de desenvolvimento
   development: {
     client: 'sqlite3',
@@ -73,3 +70,5 @@ module.exports = {
     debug: false
   }
 };
+
+export default config; 

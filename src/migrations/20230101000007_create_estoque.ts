@@ -1,8 +1,10 @@
+import type { Knex } from 'knex';
+
 /**
  * Migration para criar a tabela de Estoque
  */
-exports.up = function(knex) {
-  return knex.schema.createTable('estoque', function(table) {
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('estoque', (table: Knex.TableBuilder) => {
     table.increments('id').primary();
     table.integer('medicamento_id').unsigned().references('id').inTable('medicamentos');
     table.integer('lote_id').unsigned().references('id').inTable('lotes');
@@ -11,8 +13,8 @@ exports.up = function(knex) {
     table.string('localizacao');
     table.timestamps(true, true);
   });
-};
+}
 
-exports.down = function(knex) {
+export async function down(knex: Knex): Promise<void> {
   return knex.schema.dropTable('estoque');
-}; 
+} 

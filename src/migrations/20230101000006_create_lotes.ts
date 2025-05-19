@@ -1,8 +1,10 @@
+import type { Knex } from 'knex';
+
 /**
  * Migration para criar a tabela de Lotes
  */
-exports.up = function(knex) {
-  return knex.schema.createTable('lotes', function(table) {
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('lotes', (table: Knex.TableBuilder) => {
     table.increments('id').primary();
     table.string('numero_lote').notNullable();
     table.integer('medicamento_id').unsigned().references('id').inTable('medicamentos');
@@ -13,8 +15,8 @@ exports.up = function(knex) {
     table.string('status').defaultTo('DISPONIVEL');
     table.timestamps(true, true);
   });
-};
+}
 
-exports.down = function(knex) {
+export async function down(knex: Knex): Promise<void> {
   return knex.schema.dropTable('lotes');
-}; 
+} 

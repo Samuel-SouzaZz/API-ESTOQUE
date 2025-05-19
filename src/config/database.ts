@@ -4,9 +4,8 @@
  */
 
 import dotenv from 'dotenv';
-import knex from 'knex';
-// @ts-ignore
-const config = require('../../knexfile');
+import knex, { Knex } from 'knex';
+import config from '../../knexfile';
 
 dotenv.config();
 
@@ -23,7 +22,12 @@ const connectDB = async (): Promise<void> => {
       throw new Error(`Configuração para ambiente "${environment}" não encontrada`);
     }
     
-    console.log(`Conectando ao banco de dados "${knexConfig.connection.database}" no ambiente "${environment}"`);
+    // Mensagem de log com base no tipo de conexão
+    if (environment === 'development') {
+      console.log(`Conectando ao banco de dados SQLite no ambiente "${environment}"`);
+    } else {
+      console.log(`Conectando ao banco de dados PostgreSQL no ambiente "${environment}"`);
+    }
     
     // Inicializa a conexão com o banco de dados
     const db = knex(knexConfig);

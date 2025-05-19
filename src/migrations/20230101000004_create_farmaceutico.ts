@@ -1,15 +1,17 @@
+import type { Knex } from 'knex';
+
 /**
  * Migration para criar a tabela de Farmacêuticos
  */
-exports.up = function(knex) {
-  return knex.schema.createTable('farmaceuticos', function(table) {
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('farmaceuticos', (table: Knex.TableBuilder) => {
     table.increments('id').primary();
     table.string('nome').notNullable();
     table.string('crf').notNullable();
     table.timestamps(true, true); // created_at e updated_at
   });
-};
+}
 
-exports.down = function(knex) {
+export async function down(knex: Knex): Promise<void> {
   return knex.schema.dropTable('farmaceuticos');
-}; 
+} 

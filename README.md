@@ -30,8 +30,10 @@ src/
   ├── repositorio/      # Camada de acesso a dados (DAO/Repository)
   ├── middlewares/      # Middlewares do Express
   ├── utils/            # Funções utilitárias
-  ├── migrations/       # Migrations do banco de dados (Knex.js)
-  ├── seeds/            # Seeds para dados iniciais do banco
+  ├── migrations/       # Migrations do banco de dados (Knex.js) em TypeScript
+  ├── seeds/            # Seeds para dados iniciais do banco em TypeScript
+  ├── types/            # Definições de tipos TypeScript
+  ├── scripts/          # Scripts utilitários
   └── server.ts         # Ponto de entrada da aplicação
 ```
 
@@ -88,32 +90,49 @@ src/
 ## 📡 API Endpoints
 
 ### Medicamentos
-- `GET /medicamentos`: Lista todos os medicamentos
-- `GET /medicamentos/:id`: Busca um medicamento por ID
-- `POST /medicamentos`: Cria um novo medicamento
-- `PUT /medicamentos/:id`: Atualiza um medicamento existente
-- `DELETE /medicamentos/:id`: Remove um medicamento
-- `GET /medicamentos/nome/:nome`: Busca medicamentos por nome
-- `GET /medicamentos/fornecedor/:id`: Busca medicamentos por fornecedor
+- `GET /api/medicamentos`: Lista todos os medicamentos
+- `GET /api/medicamentos/:id`: Busca um medicamento por ID
+- `POST /api/medicamentos`: Cria um novo medicamento
+- `PUT /api/medicamentos/:id`: Atualiza um medicamento existente
+- `DELETE /api/medicamentos/:id`: Remove um medicamento
+- `GET /api/medicamentos/busca/nome`: Busca medicamentos por nome
+- `GET /api/medicamentos/fornecedor/:id`: Busca medicamentos por fornecedor
 
 ### Lotes
-- `GET /lotes`: Lista todos os lotes
-- `GET /lotes/:id`: Busca um lote por ID
-- `POST /lotes`: Cria um novo lote
-- `PUT /lotes/:id`: Atualiza um lote existente
-- `DELETE /lotes/:id`: Remove um lote
-- `GET /lotes/produto/:id`: Busca lotes por produto
-- `GET /lotes/vencidos`: Busca lotes vencidos 
-- `GET /lotes/proximos-vencimento/:dias`: Busca lotes próximos do vencimento
+- `GET /api/lotes`: Lista todos os lotes
+- `GET /api/lotes/:id`: Busca um lote por ID
+- `POST /api/lotes`: Cria um novo lote
+- `PUT /api/lotes/:id`: Atualiza um lote existente
+- `DELETE /api/lotes/:id`: Remove um lote
+- `GET /api/lotes/produto/:id`: Busca lotes por produto
+- `GET /api/lotes/vencidos`: Busca lotes vencidos 
+- `GET /api/lotes/proximos-vencimento/:dias`: Busca lotes próximos do vencimento
 
 ### Controle de Estoque
-- `GET /controle-estoque`: Lista todas as solicitações
-- `GET /controle-estoque/:id`: Busca uma solicitação por ID
-- `POST /controle-estoque`: Cria uma nova solicitação
-- `PUT /controle-estoque/:id`: Atualiza uma solicitação existente
-- `PUT /controle-estoque/:id/status`: Atualiza o status de uma solicitação
-- `GET /controle-estoque/medico/:id`: Busca solicitações por médico
-- `GET /controle-estoque/paciente/:id`: Busca solicitações por paciente
+- `GET /api/controle-estoque`: Lista todas as solicitações
+- `GET /api/controle-estoque/:id`: Busca uma solicitação por ID
+- `POST /api/controle-estoque`: Cria uma nova solicitação
+- `PUT /api/controle-estoque/:id`: Atualiza uma solicitação existente
+- `PUT /api/controle-estoque/:id/status`: Atualiza o status de uma solicitação
+- `GET /api/controle-estoque/medico/:id`: Busca solicitações por médico
+- `GET /api/controle-estoque/paciente/:id`: Busca solicitações por paciente
+
+### Fornecedores
+- `GET /api/fornecedores`: Lista todos os fornecedores
+- `GET /api/fornecedores/:id`: Busca um fornecedor por ID 
+- `POST /api/fornecedores`: Cria um novo fornecedor
+- `PUT /api/fornecedores/:id`: Atualiza um fornecedor existente
+- `DELETE /api/fornecedores/:id`: Remove um fornecedor
+- `GET /api/fornecedores/busca/nome`: Busca fornecedores por nome
+- `GET /api/fornecedores/status/:status`: Busca fornecedores por status
+
+### Pacientes
+- `GET /api/pacientes`: Lista todos os pacientes
+- `GET /api/pacientes/:id`: Busca um paciente por ID
+- `POST /api/pacientes`: Cria um novo paciente
+- `PUT /api/pacientes/:id`: Atualiza um paciente existente
+- `DELETE /api/pacientes/:id`: Remove um paciente
+- `GET /api/pacientes/busca/nome`: Busca pacientes por nome
 
 ## 🛠️ Requisitos
 
@@ -196,34 +215,36 @@ npm start
 - `npm run build`: Compila o projeto TypeScript
 - `npm start`: Inicia o servidor em produção
 - `npm test`: Executa os testes
-- `npm run migrate`: Executa as migrations pendentes
+- `npm run migrate`: Executa as migrations pendentes via knex
+- `npm run migrate:ts`: Executa as migrations via script TypeScript
 - `npm run migrate:rollback`: Reverte a última migration
-- `npm run seed`: Popula o banco com dados iniciais
+- `npm run seed`: Executa seeds via knex
+- `npm run seed:ts`: Executa seeds via script TypeScript
 
 ## 🗄️ Estrutura do Banco de Dados
 
 ### Migrations (src/migrations/)
 ```
-20230101000000_create_fornecedores.js
-20230101000001_create_farmacia_popular.js
-20230101000002_create_medico.js
-20230101000003_create_paciente.js
-20230101000004_create_farmaceutico.js
-20230101000005_create_medicamentos.js
-20230101000006_create_lotes.js
-20230101000007_create_estoque.js
-20230101000008_create_controle_estoque.js
+20230101000000_create_fornecedores.ts
+20230101000001_create_farmacia_popular.ts
+20230101000002_create_medico.ts
+20230101000003_create_paciente.ts
+20230101000004_create_farmaceutico.ts
+20230101000005_create_medicamentos.ts
+20230101000006_create_lotes.ts
+20230101000007_create_estoque.ts
+20230101000008_create_controle_estoque.ts
 ```
 
 ### Seeds para Dados Iniciais (src/seeds/)
 ```
-01_fornecedores.js
-02_medicos.js
-03_pacientes.js
-04_medicamentos.js
+01_fornecedores.ts
+02_medicos.ts
+03_pacientes.ts
+04_medicamentos.ts
 ```
 
-## 🔍 Comandos Úteis do Knex
+## 🔍 Comandos Úteis do Knex com TypeScript
 
 ### Migrations
 ```bash
@@ -231,10 +252,10 @@ npm start
 npx knex migrate:make nome_da_migration
 
 # Executar migrations pendentes
-npx knex migrate:latest
+npm run migrate
 
 # Reverter última batch de migrations
-npx knex migrate:rollback
+npm run migrate:rollback
 ```
 
 ### Seeds
@@ -243,10 +264,10 @@ npx knex migrate:rollback
 npx knex seed:make nome_do_seed
 
 # Executar todos os seeds
-npx knex seed:run
+npm run seed
 
 # Executar um seed específico
-npx knex seed:run --specific=seed-name.js
+npx knex seed:run --specific=seed-name.ts --knexfile knexfile.ts
 ```
 
 ## 📝 Documentação Adicional
