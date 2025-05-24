@@ -1,11 +1,14 @@
-import Medicamento, { IMedicamento, TarjaMedicamento } from './Medicamento';
-import Fornecedor, { IFornecedor, StatusFornecedor } from './Fornecedor';
+import Medicamento, { IMedicamento } from './Medicamento';
+import { TarjaMedicamento } from './enums/tarjamedicamento';
+import Fornecedor, { IFornecedor } from './Fornecedor';
+import { StatusFornecedor } from './enums/statusFornecedor';
 import FarmaciaPopular, { IFarmaciaPopular } from './FarmaciaPopular';
 import Lote, { ILote } from './Lote';
 import Estoque, { IEstoque } from './Estoque';
 import Medico, { IMedico } from './Medico';
 import Paciente, { IPaciente } from './Paciente';
-import ControleEstoque, { IControleEstoque, StatusControleEstoque } from './ControleEstoque';
+import ControleEstoque, { IControleEstoque } from './ControleEstoque';
+import { StatusControleEstoque } from './enums/StartusControleEstoque';
 import Farmaceutico, { IFarmaceutico } from './Farmaceutico';
 
 export {

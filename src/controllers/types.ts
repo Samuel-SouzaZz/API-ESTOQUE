@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 /**
  * Tipo para funções de controller
  */
-export type ControllerFunction = (req: Request, res: Response) => Promise<void>;
+export type ControllerFunction = (req: Request, res: Response) => Promise<Response | void>;
 
 /**
  * Função auxiliar para criar resposta de sucesso
