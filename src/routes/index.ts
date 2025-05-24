@@ -4,8 +4,16 @@ import controleEstoqueRoutes from './controleEstoqueRoutes';
 import loteRoutes from './loteRoutes';
 import fornecedorRoutes from './fornecedorRoutes';
 import pacienteRoutes from './pacienteRoutes';
+import authRoutes from './authRoutes';
+import protectedExamples from './protectedExamples';
 
 const router = express.Router();
+
+// Rotas de autenticação
+router.use('/auth', authRoutes);
+
+// Rotas de exemplos protegidos
+router.use('/protected', protectedExamples);
 
 // Rotas de medicamentos
 router.use('/medicamentos', medicamentoRoutes);
