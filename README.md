@@ -46,6 +46,11 @@ npm run dev
 npm run build
 npm start
 ```
+6.Comando	Tipo de biblioteca	Função principal
+-class-validator-	Validação	Valida propriedades de classes com decorators
+-class-transformer-	Transformação	Converte JSON em instâncias de classes e vice-versa
+-reflect-metadata-	Suporte a decorators	Permite que decorators funcionem corretamente
+npm install class-validator class-transformer reflect-metadata
 
 ## 🔐 Sistema de Autenticação
 
