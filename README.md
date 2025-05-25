@@ -47,6 +47,7 @@ npm run build
 npm start
 ```
 6.Comando	Tipo de biblioteca	Função principal:
+
 ```npm install class-validator class-transformer reflect-metadata```
 
 ## 🔐 Sistema de Autenticação
