@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura - API Controle Estoque Medicamentos</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #28a745;
+        }
+        .header h1 {
+            color: #28a745;
+            margin: 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .header p {
+            color: #6c757d;
+            margin: 15px 0 5px 0;
+            font-size: 18px;
+        }
+        .mermaid-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #28a745;
+            border-radius: 8px;
+            color: white;
+        }
+        .footer h3 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+        .footer p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .instructions h4 {
+            color: #856404;
+            margin: 0 0 10px 0;
+        }
+        .instructions p {
+            color: #856404;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Arquitetura do Projeto</h1>
+            <p><strong>API de Controle de Estoque de Medicamentos</strong></p>
+            <p>Desenvolvimento Web Back-end I • Prof. Thiago Goldoni Thomé</p>
+            <p><strong>Status: 100% COMPLETO ✅ • Apresentação: 09/06/2025</strong></p>
+        </div>
+        <div class="mermaid-container">
+            <div class="mermaid">
+graph TB
+    subgraph "🎯 API Controle Estoque Medicamentos"
+        A["📊 STATUS: 100% COMPLETO<br/>13/13 Componentes Aprovados<br/>🚀 Pronto para Apresentação"]
+    end
+    
+    subgraph "🏗️ ARQUITETURA EM CAMADAS"
+        subgraph "📱 Presentation Layer"
+            B1["✅ server.ts<br/>Express + TypeScript<br/>Middlewares configurados"]
+            B2["✅ routes/<br/>6 módulos de rotas<br/>Middlewares de autorização"]
+            B3["✅ middleware/<br/>JWT Authentication<br/>Role-based Authorization"]
+        end
+        
+        subgraph "🔧 Business Layer"
+            C1["✅ controllers/<br/>6 Controllers CRUD<br/>AuthController + 5 entidades"]
+            C2["✅ services/<br/>6 Services implementados<br/>Lógica de negócio"]
+            C3["✅ dtos/<br/>DTOs padronizados<br/>Validações de entrada"]
+        end
+        
+        subgraph "🗃️ Data Layer"
+            D1["✅ repositorio/<br/>8 Repositories + Base<br/>CRUD + Filtros específicos"]
+            D2["✅ models/<br/>10 Models + 4 Enums<br/>Tipagem completa"]
+            D3["✅ migrations/<br/>9 Migrations de banco<br/>Estrutura de dados"]
+        end
+        
+        subgraph "⚙️ Configuration Layer"
+            E1["✅ config/<br/>Knex multi-ambiente<br/>Database configuration"]
+            E2["✅ types/<br/>TypeScript interfaces<br/>Tipagens customizadas"]
+            E3["✅ scripts/<br/>Migration/Seed scripts<br/>Automação de setup"]
+            E4["✅ seeds/<br/>6 Usuários de teste<br/>Dados iniciais"]
+        end
+    end
+    
+    subgraph "🔐 SISTEMA DE AUTENTICAÇÃO"
+        F1["🔑 JWT Tokens<br/>Login/Register<br/>Token verification"]
+        F2["👥 User Roles<br/>ADMIN | MEDICO<br/>FARMACEUTICO | PACIENTE"]
+        F3["🛡️ Authorization<br/>Role-based access<br/>Hierarchical permissions"]
+        F4["🔒 Security<br/>bcrypt encryption<br/>Password hashing"]
+    end
+    
+    subgraph "💊 FUNCIONALIDADES CORE"
+        G1["🏥 Controle Estoque<br/>Solicitações de medicamentos<br/>Status: Reservado→Concluído/Cancelado"]
+        G2["🏷️ Gestão Lotes<br/>Controle de validade<br/>Alertas de vencimento"]
+        G3["💊 Medicamentos<br/>Catálogo completo<br/>Sistema de tarjas"]
+        G4["🏢 Fornecedores<br/>Gestão de parceiros<br/>Status disponibilidade"]
+        G5["👨‍⚕️ Profissionais<br/>Médicos e Farmacêuticos<br/>Gestão de usuários"]
+        G6["🧑‍🤝‍🧑 Pacientes<br/>Destinatários finais<br/>Controle de acesso"]
+    end
+    
+    subgraph "🔍 SISTEMA DE FILTROS"
+        H1["📋 Por Nome<br/>Busca textual<br/>Case insensitive"]
+        H2["📊 Por Status<br/>Estados definidos<br/>Enum-based"]
+        H3["🏭 Por Fornecedor<br/>Relacionamento FK<br/>Entidade específica"]
+        H4["⏰ Por Validade<br/>Lotes vencidos<br/>Próximos vencimento"]
+        H5["👤 Por Usuário<br/>Médico/Paciente<br/>Dados personalizados"]
+    end
+    
+    subgraph "📊 MÉTRICAS DE QUALIDADE"
+        I1["✅ Clean Code<br/>Nomenclatura consistente<br/>Separação responsabilidades"]
+        I2["✅ TypeScript<br/>Tipagem forte<br/>Interfaces bem definidas"]
+        I3["✅ Arquitetura<br/>Padrão em camadas<br/>Controller→Service→Repository"]
+        I4["✅ Documentação<br/>JSDoc completo<br/>README profissional"]
+    end
+    
+    A --> B1
+    A --> C1
+    A --> D1
+    A --> E1
+    A --> F1
+    A --> G1
+    A --> H1
+    A --> I1
+    
+    B1 --> B2 --> B3
+    C1 --> C2 --> C3
+    D1 --> D2 --> D3
+    E1 --> E2 --> E3 --> E4
+    
+    F1 --> F2 --> F3 --> F4
+    G1 --> G2 --> G3 --> G4 --> G5 --> G6
+    H1 --> H2 --> H3 --> H4 --> H5
+    I1 --> I2 --> I3 --> I4
+    
+    style A fill:#28a745,stroke:#1e7e34,stroke-width:4px,color:#fff
+    style B1 fill:#17a2b8,stroke:#138496,stroke-width:2px,color:#fff
+    style B2 fill:#17a2b8,stroke:#138496,stroke-width:2px,color:#fff
+    style B3 fill:#17a2b8,stroke:#138496,stroke-width:2px,color:#fff
+    style C1 fill:#ffc107,stroke:#e0a800,stroke-width:2px,color:#000
+    style C2 fill:#ffc107,stroke:#e0a800,stroke-width:2px,color:#000
+    style C3 fill:#ffc107,stroke:#e0a800,stroke-width:2px,color:#000
+    style D1 fill:#6c757d,stroke:#495057,stroke-width:2px,color:#fff
+    style D2 fill:#6c757d,stroke:#495057,stroke-width:2px,color:#fff
+    style D3 fill:#6c757d,stroke:#495057,stroke-width:2px,color:#fff
+    style E1 fill:#6f42c1,stroke:#5a32a3,stroke-width:2px,color:#fff
+    style E2 fill:#6f42c1,stroke:#5a32a3,stroke-width:2px,color:#fff
+    style E3 fill:#6f42c1,stroke:#5a32a3,stroke-width:2px,color:#fff
+    style E4 fill:#6f42c1,stroke:#5a32a3,stroke-width:2px,color:#fff
+    style F1 fill:#dc3545,stroke:#c82333,stroke-width:2px,color:#fff
+    style F2 fill:#dc3545,stroke:#c82333,stroke-width:2px,color:#fff
+    style F3 fill:#dc3545,stroke:#c82333,stroke-width:2px,color:#fff
+    style F4 fill:#dc3545,stroke:#c82333,stroke-width:2px,color:#fff
+    style G1 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style G2 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style G3 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style G4 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style G5 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style G6 fill:#fd7e14,stroke:#e55a00,stroke-width:2px,color:#fff
+    style H1 fill:#20c997,stroke:#1a9f7a,stroke-width:2px,color:#fff
+    style H2 fill:#20c997,stroke:#1a9f7a,stroke-width:2px,color:#fff
+    style H3 fill:#20c997,stroke:#1a9f7a,stroke-width:2px,color:#fff
+    style H4 fill:#20c997,stroke:#1a9f7a,stroke-width:2px,color:#fff
+    style H5 fill:#20c997,stroke:#1a9f7a,stroke-width:2px,color:#fff
+    style I1 fill:#007bff,stroke:#0056b3,stroke-width:2px,color:#fff
+    style I2 fill:#007bff,stroke:#0056b3,stroke-width:2px,color:#fff
+    style I3 fill:#007bff,stroke:#0056b3,stroke-width:2px,color:#fff
+    style I4 fill:#007bff,stroke:#0056b3,stroke-width:2px,color:#fff
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🚀 Sistema 100% Completo e Funcional</h3>
+            <p>API de Controle de Estoque de Medicamentos</p>
+            <p>13 Componentes • 6 Controllers • 4 User Roles • 9 Migrations</p>
+            <p><strong>Projeto Finalizado • Junho de 2025</strong></p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '14px'
+            }
+        });
+    </script>
+</body>
+</html> 
