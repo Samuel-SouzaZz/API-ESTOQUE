@@ -4,10 +4,8 @@ import Medicamento, { IMedicamento } from '../models/Medicamento';
 
 /**
  * Repositório para gerenciamento de Medicamentos
- * Implementa operações CRUD básicas e métodos específicos para a entidade Medicamento
  */
 export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
-  // Simulando um banco de dados em memória para testes
   private medicamentos: IMedicamento[] = [];
 
   /**

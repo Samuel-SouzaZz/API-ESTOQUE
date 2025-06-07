@@ -5,10 +5,8 @@ import { StatusControleEstoque } from '../models/enums/StartusControleEstoque';
 
 /**
  * Repositório para gerenciamento de Controle de Estoque
- * Implementa operações CRUD básicas conforme conteúdo da disciplina
  */
 export class ControleEstoqueRepository implements IBaseRepository<IControleEstoque> {
-  // Simulando um banco de dados em memória para testes
   private controles: IControleEstoque[] = [];
 
   /**
@@ -87,7 +85,7 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Atualiza o status de um controle de estoque (funcionalidade básica)
+   * Atualiza o status de um controle de estoque
    * @param id ID do registro de controle
    * @param status Novo status
    * @returns Promise com o registro atualizado ou null
@@ -97,7 +95,7 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Busca registros por médico (filtro básico conforme matéria)
+   * Busca registros por médico
    * @param medicoId ID do médico
    * @returns Promise com lista de registros do médico
    */
@@ -106,7 +104,7 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Busca registros por paciente (filtro básico conforme matéria)
+   * Busca registros por paciente
    * @param pacienteId ID do paciente
    * @returns Promise com lista de registros do paciente
    */
@@ -115,7 +113,7 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Busca registros por status (filtro básico conforme matéria)
+   * Busca registros por status
    * @param status Status a ser filtrado
    * @returns Promise com lista de registros com o status especificado
    */

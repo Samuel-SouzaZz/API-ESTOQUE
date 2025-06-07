@@ -21,7 +21,7 @@ export class AuthService {
       throw new Error('Usuário já existe com este email');
     }
 
-    // Criptografa a senha conforme a matéria
+    // Criptografa a senha
     const senhaHash = await bcrypt.hash(senha, 10);
 
     // Cria o usuário
@@ -51,7 +51,7 @@ export class AuthService {
       throw new Error('Email ou senha incorretos');
     }
 
-    // Gera o token JWT conforme a matéria
+    // Gera o token JWT
     const token = this.generateToken(usuario);
 
     // Remove a senha do retorno
@@ -64,7 +64,7 @@ export class AuthService {
   }
 
   /**
-   * Gera token JWT conforme especificação da matéria
+   * Gera token JWT
    */
   private generateToken(usuario: IUsuario): string {
     const JWT_SECRET = process.env.JWT_SECRET;
@@ -74,7 +74,7 @@ export class AuthService {
       throw new Error('JWT_SECRET não está configurado no .env');
     }
 
-    // Payload do token conforme a matéria
+    // Payload do token
     const payload = {
       id: usuario.id,
       nome: usuario.nome,
@@ -82,7 +82,7 @@ export class AuthService {
       role: usuario.role
     };
 
-    // Gera o token com Header, Payload e Signature conforme a matéria
+    // Gera o token com Header, Payload e Signature
     return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
   }
 
@@ -97,7 +97,7 @@ export class AuthService {
     }
 
     try {
-      // Valida o token conforme a matéria:
+      // Valida o token:
       // - Decodifica o token
       // - Verifica a assinatura
       // - Verifica se já passou o tempo de expiração (exp)

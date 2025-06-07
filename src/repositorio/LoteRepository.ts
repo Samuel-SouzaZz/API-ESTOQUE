@@ -4,10 +4,8 @@ import Lote, { ILote } from '../models/Lote';
 
 /**
  * Repositório para gerenciamento de Lotes de medicamentos
- * Implementa operações CRUD básicas conforme conteúdo da disciplina
  */
 export class LoteRepository implements IBaseRepository<ILote> {
-  // Simulando um banco de dados em memória para testes
   private lotes: ILote[] = [];
 
   /**
@@ -85,7 +83,7 @@ export class LoteRepository implements IBaseRepository<ILote> {
   }
 
   /**
-   * Busca lotes por produto (filtro básico conforme matéria)
+   * Busca lotes por produto
    * @param produtoId ID do produto
    * @returns Promise com lista de lotes do produto
    */
@@ -94,7 +92,7 @@ export class LoteRepository implements IBaseRepository<ILote> {
   }
   
   /**
-   * Busca lotes vencidos (filtro básico conforme matéria)
+   * Busca lotes vencidos
    * @returns Promise com lista de lotes vencidos
    */
   async findLotesVencidos(): Promise<ILote[]> {
@@ -103,7 +101,7 @@ export class LoteRepository implements IBaseRepository<ILote> {
   }
   
   /**
-   * Busca lotes próximos do vencimento (filtro básico conforme matéria)
+   * Busca lotes próximos do vencimento
    * @returns Promise com lista de lotes próximos do vencimento
    */
   async findLotesProximosVencimento(): Promise<ILote[]> {

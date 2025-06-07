@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
-import { repositories } from '../repositorio';
+import { PacienteService } from '../services/PacienteService';
 
 /**
  * Controller para pacientes
- * Implementa CRUD básico conforme conteúdo da disciplina
+ * Implementa CRUD completo
  */
 export class PacienteController {
+  private static pacienteService = new PacienteService();
   /**
    * Busca todos os pacientes
    */
   static async findAll(req: Request, res: Response) {
     try {
-      const pacientes = await repositories.pacienteRepository.findAll();
+      const pacientes = await PacienteController.pacienteService.findAll();
       res.json({
         success: true,
         message: 'Pacientes encontrados',
@@ -32,7 +33,7 @@ export class PacienteController {
   static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const paciente = await repositories.pacienteRepository.findById(id);
+      const paciente = await PacienteController.pacienteService.findById(id);
       
       if (!paciente) {
         return res.status(404).json({
@@ -60,7 +61,7 @@ export class PacienteController {
    */
   static async create(req: Request, res: Response) {
     try {
-      const paciente = await repositories.pacienteRepository.create(req.body);
+      const paciente = await PacienteController.pacienteService.create(req.body);
       res.status(201).json({
         success: true,
         message: 'Paciente criado',
@@ -81,7 +82,7 @@ export class PacienteController {
   static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const paciente = await repositories.pacienteRepository.update(id, req.body);
+      const paciente = await PacienteController.pacienteService.update(id, req.body);
       
       if (!paciente) {
         return res.status(404).json({
@@ -110,7 +111,7 @@ export class PacienteController {
   static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await repositories.pacienteRepository.delete(id);
+      const result = await PacienteController.pacienteService.delete(id);
       
       if (!result) {
         return res.status(404).json({
@@ -133,7 +134,7 @@ export class PacienteController {
   }
 
   /**
-   * Busca por nome (filtro básico)
+   * Busca por nome
    */
   static async findByNome(req: Request, res: Response) {
     try {
@@ -146,7 +147,7 @@ export class PacienteController {
         });
       }
       
-      const pacientes = await repositories.pacienteRepository.findByNome(nome as string);
+      const pacientes = await PacienteController.pacienteService.findByNome(nome as string);
       res.json({
         success: true,
         message: 'Busca por nome realizada',

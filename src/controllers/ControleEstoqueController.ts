@@ -3,7 +3,7 @@ import { ControleEstoqueService } from '../services/ControleEstoqueService';
 
 /**
  * Controller para controle de estoque
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa operações de estoque
  */
 export class ControleEstoqueController {
   private static controleEstoqueService = new ControleEstoqueService();
@@ -135,7 +135,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Atualiza status (funcionalidade básica)
+   * Atualiza status
    */
   static async atualizarStatus(req: Request, res: Response) {
     try {
@@ -173,7 +173,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por médico (filtro básico)
+   * Busca por médico
    */
   static async findByMedico(req: Request, res: Response) {
     try {
@@ -195,7 +195,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por paciente (filtro básico)
+   * Busca por paciente
    */
   static async findByPaciente(req: Request, res: Response) {
     try {
@@ -217,7 +217,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por status (filtro básico)
+   * Busca por status
    */
   static async findByStatus(req: Request, res: Response) {
     try {
@@ -246,7 +246,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Relatório simples (funcionalidade básica)
+   * Relatório de estoque
    */
   static async relatorio(req: Request, res: Response) {
     try {

@@ -3,7 +3,7 @@ import { LoteService } from '../services/LoteService';
 
 /**
  * Controller para lotes de medicamentos
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa operações de lotes
  */
 export class LoteController {
   private static loteService = new LoteService();
@@ -135,7 +135,7 @@ export class LoteController {
   }
 
   /**
-   * Busca por produto (filtro básico)
+   * Busca por produto
    */
   static async findByProduto(req: Request, res: Response) {
     try {
@@ -157,7 +157,7 @@ export class LoteController {
   }
 
   /**
-   * Busca lotes vencidos (funcionalidade básica)
+   * Busca lotes vencidos
    */
   static async findLotesVencidos(req: Request, res: Response) {
     try {
@@ -177,7 +177,7 @@ export class LoteController {
   }
 
   /**
-   * Busca lotes próximos do vencimento (funcionalidade básica)
+   * Busca lotes próximos do vencimento
    */
   static async findLotesProximosVencimento(req: Request, res: Response) {
     try {
@@ -197,7 +197,7 @@ export class LoteController {
   }
 
   /**
-   * Verifica vencimento de um lote (funcionalidade básica)
+   * Verifica vencimento de um lote
    */
   static async verificarVencimento(req: Request, res: Response) {
     try {

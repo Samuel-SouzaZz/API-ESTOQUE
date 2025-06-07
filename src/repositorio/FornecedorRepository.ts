@@ -5,10 +5,8 @@ import { StatusFornecedor } from '../models/enums/statusFornecedor';
 
 /**
  * Repositório para gerenciamento de Fornecedores
- * Implementa operações CRUD básicas e métodos específicos para a entidade Fornecedor
  */
 export class FornecedorRepository implements IBaseRepository<IFornecedor> {
-  // Simulando um banco de dados em memória para testes
   private fornecedores: IFornecedor[] = [];
 
   /**

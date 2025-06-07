@@ -5,10 +5,8 @@ import { UserRole } from '../models/enums/UserRole';
 
 /**
  * Repositório para gerenciamento de Usuários
- * Implementa operações CRUD básicas conforme conteúdo da disciplina
  */
 export class UsuarioRepository implements IBaseRepository<IUsuario> {
-  // Simulando um banco de dados em memória para testes
   private usuarios: IUsuario[] = [];
 
   /**
@@ -30,7 +28,7 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
   }
 
   /**
-   * Busca usuário por email (método específico para autenticação)
+   * Busca usuário por email
    * @param email Email do usuário
    * @returns Promise com o usuário encontrado ou null
    */

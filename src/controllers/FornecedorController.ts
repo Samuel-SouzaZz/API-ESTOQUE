@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
-import { repositories } from '../repositorio';
+import { FornecedorService } from '../services/FornecedorService';
 
 /**
  * Controller para fornecedores
- * Implementa CRUD básico conforme conteúdo da disciplina
+ * Implementa CRUD completo
  */
 export class FornecedorController {
+  private static fornecedorService = new FornecedorService();
   /**
    * Busca todos os fornecedores
    */
   static async findAll(req: Request, res: Response) {
     try {
-      const fornecedores = await repositories.fornecedorRepository.findAll();
+      const fornecedores = await FornecedorController.fornecedorService.findAll();
       res.json({
         success: true,
         message: 'Fornecedores encontrados',
@@ -32,7 +33,7 @@ export class FornecedorController {
   static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const fornecedor = await repositories.fornecedorRepository.findById(id);
+      const fornecedor = await FornecedorController.fornecedorService.findById(id);
       
       if (!fornecedor) {
         return res.status(404).json({
@@ -60,7 +61,7 @@ export class FornecedorController {
    */
   static async create(req: Request, res: Response) {
     try {
-      const fornecedor = await repositories.fornecedorRepository.create(req.body);
+      const fornecedor = await FornecedorController.fornecedorService.create(req.body);
       res.status(201).json({
         success: true,
         message: 'Fornecedor criado',
@@ -81,7 +82,7 @@ export class FornecedorController {
   static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const fornecedor = await repositories.fornecedorRepository.update(id, req.body);
+      const fornecedor = await FornecedorController.fornecedorService.update(id, req.body);
       
       if (!fornecedor) {
         return res.status(404).json({
@@ -110,7 +111,7 @@ export class FornecedorController {
   static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await repositories.fornecedorRepository.delete(id);
+      const result = await FornecedorController.fornecedorService.delete(id);
       
       if (!result) {
         return res.status(404).json({
@@ -133,7 +134,7 @@ export class FornecedorController {
   }
 
   /**
-   * Busca por nome (filtro básico)
+   * Busca por nome
    */
   static async findByNome(req: Request, res: Response) {
     try {
@@ -146,7 +147,7 @@ export class FornecedorController {
         });
       }
       
-      const fornecedores = await repositories.fornecedorRepository.findByNome(nome as string);
+      const fornecedores = await FornecedorController.fornecedorService.findByNome(nome as string);
       res.json({
         success: true,
         message: 'Busca por nome realizada',
@@ -162,12 +163,12 @@ export class FornecedorController {
   }
 
   /**
-   * Busca por status (filtro básico)
+   * Busca por status
    */
   static async findByStatus(req: Request, res: Response) {
     try {
       const { status } = req.params;
-      const fornecedores = await repositories.fornecedorRepository.findByStatus(status);
+      const fornecedores = await FornecedorController.fornecedorService.findByStatus(status);
       
       res.json({
         success: true,

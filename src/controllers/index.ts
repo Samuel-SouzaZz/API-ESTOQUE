@@ -1,6 +1,6 @@
 /**
  * Arquivo para centralizar e facilitar a exportação dos controllers
- * Versão simplificada conforme conteúdo da disciplina
+ * Centraliza exports dos controllers
  */
 import { MedicamentoController } from './MedicamentoController';
 import { ControleEstoqueController } from './ControleEstoqueController';

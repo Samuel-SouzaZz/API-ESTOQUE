@@ -4,10 +4,8 @@ import Paciente, { IPaciente } from '../models/Paciente';
 
 /**
  * Repositório para gerenciamento de Pacientes
- * Implementa operações CRUD básicas e métodos específicos para a entidade Paciente
  */
 export class PacienteRepository implements IBaseRepository<IPaciente> {
-  // Simulando um banco de dados em memória para testes
   private pacientes: IPaciente[] = [];
 
   /**

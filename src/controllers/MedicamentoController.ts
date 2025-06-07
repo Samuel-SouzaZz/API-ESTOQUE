@@ -3,7 +3,7 @@ import { MedicamentoService } from '../services/MedicamentoService';
 
 /**
  * Controller para operações com medicamentos
- * Implementa CRUD básico conforme conteúdo da disciplina
+ * Implementa CRUD completo
  */
 export class MedicamentoController {
   private static medicamentoService = new MedicamentoService();
@@ -135,7 +135,7 @@ export class MedicamentoController {
   }
 
   /**
-   * Busca por nome (filtro básico conforme matéria)
+   * Busca por nome
    */
   static async findByNome(req: Request, res: Response) {
     try {
@@ -164,7 +164,7 @@ export class MedicamentoController {
   }
 
   /**
-   * Busca por fornecedor (filtro básico conforme matéria)
+   * Busca por fornecedor
    */
   static async findByFornecedor(req: Request, res: Response) {
     try {

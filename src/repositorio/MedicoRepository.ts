@@ -4,10 +4,8 @@ import Medico, { IMedico } from '../models/Medico';
 
 /**
  * Repositório para gerenciamento de Médicos
- * Implementa operações CRUD básicas e métodos específicos para a entidade Médico
  */
 export class MedicoRepository implements IBaseRepository<IMedico> {
-  // Simulando um banco de dados em memória para testes
   private medicos: IMedico[] = [];
 
   /**

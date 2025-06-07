@@ -3,7 +3,7 @@ import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Medicamentos
- * Implementa a lógica de negócios básica conforme conteúdo da disciplina
+ * Implementa a lógica de negócios
  */
 export class MedicamentoService {
   /**
@@ -24,7 +24,7 @@ export class MedicamentoService {
    * Cria um novo medicamento
    */
   async create(data: Partial<IMedicamento>): Promise<IMedicamento> {
-    // Validação básica conforme matéria
+    // Validação obrigatória
     if (!data.nome) {
       throw new Error('Nome é obrigatório');
     }
@@ -47,14 +47,14 @@ export class MedicamentoService {
   }
 
   /**
-   * Busca medicamentos por nome (filtro básico conforme matéria)
+   * Busca medicamentos por nome
    */
   async findByNome(nome: string): Promise<IMedicamento[]> {
     return repositories.medicamentoRepository.findByNome(nome);
   }
 
   /**
-   * Busca medicamentos por fornecedor (filtro básico conforme matéria)
+   * Busca medicamentos por fornecedor
    */
   async findByFornecedor(fornecedorId: string): Promise<IMedicamento[]> {
     return repositories.medicamentoRepository.findByFornecedor(fornecedorId);
