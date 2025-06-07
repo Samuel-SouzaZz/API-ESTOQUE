@@ -162,14 +162,16 @@ npm run seed                # Seeds
 // Exemplo básico conforme matéria
 static async findAll(req: Request, res: Response) {
   try {
-    const medicamentos = await services.medicamentoService.findAll();
+    const medicamentos = await MedicamentoController.medicamentoService.findAll();
     res.json({
       success: true,
+      message: 'Medicamentos recuperados com sucesso',
       data: medicamentos
     });
   } catch (error: any) {
     res.status(500).json({
       success: false,
+      message: 'Erro ao buscar medicamentos',
       error: error.message
     });
   }
