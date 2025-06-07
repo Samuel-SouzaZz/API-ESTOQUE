@@ -1,42 +1,44 @@
 import express from 'express';
 import { PacienteController } from '../controllers/PacienteController';
+import { AuthMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * @route   GET /api/pacientes
  * @desc    Obtém todos os pacientes
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/', PacienteController.findAll);
+router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, PacienteController.findAll);
 
 /**
  * @route   GET /api/pacientes/:id
  * @desc    Obtém um paciente pelo ID
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/:id', PacienteController.findById);
+router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly, PacienteController.findById);
 
 /**
  * @route   POST /api/pacientes
  * @desc    Cria um novo paciente
- * @access  Public
+ * @access  Private - Médicos e Admins
  */
-router.post('/', PacienteController.create);
+router.post('/', authMiddleware.authenticate, authMiddleware.medicoOnly, PacienteController.create);
 
 /**
  * @route   PUT /api/pacientes/:id
  * @desc    Atualiza um paciente existente
- * @access  Public
+ * @access  Private - Médicos e Admins
  */
-router.put('/:id', PacienteController.update);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, PacienteController.update);
 
 /**
  * @route   DELETE /api/pacientes/:id
  * @desc    Remove um paciente
- * @access  Public
+ * @access  Private - Apenas Admins
  */
-router.delete('/:id', PacienteController.delete);
+router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, PacienteController.delete);
 
 /**
  * @route   GET /api/pacientes/busca/nome

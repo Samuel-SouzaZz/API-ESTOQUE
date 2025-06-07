@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { MedicamentoController } from '../controllers';
+import { AuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * @route   GET /medicamentos
@@ -20,23 +22,23 @@ router.get('/:id', MedicamentoController.findById);
 /**
  * @route   POST /medicamentos
  * @desc    Cria um novo medicamento
- * @access  Public
+ * @access  Private - Farmacêuticos e Admins
  */
-router.post('/', MedicamentoController.create);
+router.post('/', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, MedicamentoController.create);
 
 /**
  * @route   PUT /medicamentos/:id
  * @desc    Atualiza um medicamento existente
- * @access  Public
+ * @access  Private - Farmacêuticos e Admins
  */
-router.put('/:id', MedicamentoController.update);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, MedicamentoController.update);
 
 /**
  * @route   DELETE /medicamentos/:id
  * @desc    Remove um medicamento
- * @access  Public
+ * @access  Private - Apenas Admins
  */
-router.delete('/:id', MedicamentoController.delete);
+router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, MedicamentoController.delete);
 
 /**
  * @route   GET /medicamentos/busca/nome

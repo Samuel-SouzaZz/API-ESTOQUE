@@ -1,49 +1,51 @@
 import { Router } from 'express';
 import { ControleEstoqueController } from '../controllers';
+import { AuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * @route   GET /controle-estoque
  * @desc    Busca todas as solicitações de medicamentos
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/', ControleEstoqueController.findAll);
+router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, ControleEstoqueController.findAll);
 
 /**
  * @route   GET /controle-estoque/:id
  * @desc    Busca uma solicitação pelo ID
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/:id', ControleEstoqueController.findById);
+router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly, ControleEstoqueController.findById);
 
 /**
  * @route   POST /controle-estoque
  * @desc    Cria uma nova solicitação de medicamento
- * @access  Public
+ * @access  Private - Médicos e Admins
  */
-router.post('/', ControleEstoqueController.create);
+router.post('/', authMiddleware.authenticate, authMiddleware.medicoOnly, ControleEstoqueController.create);
 
 /**
  * @route   PUT /controle-estoque/:id
  * @desc    Atualiza uma solicitação existente
- * @access  Public
+ * @access  Private - Médicos e Admins
  */
-router.put('/:id', ControleEstoqueController.update);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, ControleEstoqueController.update);
 
 /**
  * @route   DELETE /controle-estoque/:id
  * @desc    Remove uma solicitação
- * @access  Public
+ * @access  Private - Apenas Admins
  */
-router.delete('/:id', ControleEstoqueController.delete);
+router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, ControleEstoqueController.delete);
 
 /**
  * @route   PATCH /controle-estoque/:id/status
  * @desc    Atualiza o status de uma solicitação
- * @access  Public
+ * @access  Private - Farmacêuticos e Admins
  */
-router.patch('/:id/status', ControleEstoqueController.atualizarStatus);
+router.patch('/:id/status', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, ControleEstoqueController.atualizarStatus);
 
 /**
  * @route   GET /controle-estoque/medico/:medicoId

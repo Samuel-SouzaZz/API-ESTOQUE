@@ -1,103 +1,147 @@
 # Rotas da API
 
-Este diretório contém a definição das rotas da API de Controle de Estoque de Medicamentos. As rotas determinam como os endpoints HTTP são mapeados para os controllers.
+Este diretório contém a definição das rotas da API de Controle de Estoque de Medicamentos. As rotas determinam como os endpoints HTTP são mapeados para os controllers, incluindo sistema de autenticação e autorização baseado em roles.
 
 ## Estrutura
 
 - **index.ts**: Arquivo principal que agrupa todas as rotas
+- **authRoutes.ts**: Rotas para autenticação (login, register, verificação)
 - **medicamentoRoutes.ts**: Rotas para operações com medicamentos
 - **controleEstoqueRoutes.ts**: Rotas para operações de controle de estoque
 - **loteRoutes.ts**: Rotas para operações com lotes de medicamentos
+- **fornecedorRoutes.ts**: Rotas para gerenciamento de fornecedores
+- **pacienteRoutes.ts**: Rotas para gerenciamento de pacientes
+- **protectedExamples.ts**: Exemplos de rotas protegidas por role
 
-## Rotas Disponíveis
+## Sistema de User Roles
 
-### Medicamentos
+A API implementa um sistema de autorização baseado em roles:
 
-- `GET /medicamentos`: Lista todos os medicamentos
-- `GET /medicamentos/:id`: Busca um medicamento por ID
-- `POST /medicamentos`: Cria um novo medicamento
-- `PUT /medicamentos/:id`: Atualiza um medicamento existente
-- `DELETE /medicamentos/:id`: Remove um medicamento
-- `GET /medicamentos/nome/:nome`: Busca medicamentos por nome
-- `GET /medicamentos/fornecedor/:id`: Busca medicamentos por fornecedor
+- **ADMIN**: Acesso total ao sistema
+- **MEDICO**: Pode prescrever medicamentos e gerenciar pacientes
+- **FARMACEUTICO**: Pode dispensar medicamentos e controlar estoque
+- **PACIENTE**: Acesso limitado aos próprios dados
 
-### Controle de Estoque
+## Rotas de Autenticação
 
-- `GET /controle-estoque`: Lista todas as solicitações
-- `GET /controle-estoque/:id`: Busca uma solicitação por ID
-- `POST /controle-estoque`: Cria uma nova solicitação
-- `PUT /controle-estoque/:id`: Atualiza uma solicitação existente
-- `DELETE /controle-estoque/:id`: Remove uma solicitação
-- `PUT /controle-estoque/:id/status`: Atualiza o status de uma solicitação
-- `GET /controle-estoque/medico/:id`: Busca solicitações por médico
-- `GET /controle-estoque/paciente/:id`: Busca solicitações por paciente
-- `GET /controle-estoque/estoque/:id`: Busca solicitações por estoque
-- `GET /controle-estoque/status/:status`: Busca solicitações por status
-- `GET /controle-estoque/relatorio`: Gera relatório de solicitações por período
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| POST | `/auth/register` | Registrar novo usuário | Público |
+| POST | `/auth/login` | Login de usuário | Público |
+| GET | `/auth/verify` | Verificar validade do token | Público |
+| GET | `/auth/me` | Obter dados do usuário logado | Privado |
 
-### Lotes
+## Rotas de Medicamentos
 
-- `GET /lotes`: Lista todos os lotes de medicamentos
-- `GET /lotes/:id`: Busca um lote por ID
-- `POST /lotes`: Cria um novo lote
-- `PUT /lotes/:id`: Atualiza um lote existente
-- `DELETE /lotes/:id`: Remove um lote
-- `GET /lotes/produto/:id`: Busca lotes por produto (medicamento)
-- `GET /lotes/vencidos`: Busca lotes vencidos 
-- `GET /lotes/proximos-vencimento/:dias`: Busca lotes próximos do vencimento
-- `GET /lotes/:id/vencido`: Verifica se um lote específico está vencido
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/medicamentos` | Lista todos os medicamentos | Público |
+| GET | `/medicamentos/:id` | Busca medicamento por ID | Público |
+| POST | `/medicamentos` | Cria novo medicamento | Farmacêuticos e Admins |
+| PUT | `/medicamentos/:id` | Atualiza medicamento | Farmacêuticos e Admins |
+| DELETE | `/medicamentos/:id` | Remove medicamento | Apenas Admins |
+| GET | `/medicamentos/busca/nome` | Busca por nome | Público |
+| GET | `/medicamentos/fornecedor/:fornecedorId` | Busca por fornecedor | Público |
 
-## Parâmetros das Requisições
+## Rotas de Controle de Estoque
 
-### POST /medicamentos
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/controle-estoque` | Lista todas as solicitações | Profissionais de saúde |
+| GET | `/controle-estoque/:id` | Busca solicitação por ID | Profissionais de saúde |
+| POST | `/controle-estoque` | Cria nova solicitação | Médicos e Admins |
+| PUT | `/controle-estoque/:id` | Atualiza solicitação | Médicos e Admins |
+| DELETE | `/controle-estoque/:id` | Remove solicitação | Apenas Admins |
+| PATCH | `/controle-estoque/:id/status` | Atualiza status | Farmacêuticos e Admins |
+| GET | `/controle-estoque/medico/:medicoId` | Busca por médico | Profissionais de saúde |
+| GET | `/controle-estoque/paciente/:pacienteId` | Busca por paciente | Profissionais de saúde |
+| GET | `/controle-estoque/busca/status` | Busca por status | Profissionais de saúde |
+| GET | `/controle-estoque/relatorio` | Gera relatório | Profissionais de saúde |
 
-```json
-{
-  "nome": "Medicamento exemplo",
-  "descricao": "Descrição opcional",
-  "fornecedor": "ID do fornecedor",
-  "quantidade": 100
-}
+## Rotas de Lotes
+
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/lotes` | Lista todos os lotes | Profissionais de saúde |
+| GET | `/lotes/:id` | Busca lote por ID | Profissionais de saúde |
+| POST | `/lotes` | Cria novo lote | Farmacêuticos e Admins |
+| PUT | `/lotes/:id` | Atualiza lote | Farmacêuticos e Admins |
+| DELETE | `/lotes/:id` | Remove lote | Apenas Admins |
+| GET | `/lotes/produto/:produtoId` | Busca por produto | Profissionais de saúde |
+| GET | `/lotes/busca/vencidos` | Busca lotes vencidos | Profissionais de saúde |
+| GET | `/lotes/busca/proximos-vencimento` | Próximos ao vencimento | Profissionais de saúde |
+| GET | `/lotes/:id/verificar-vencimento` | Verifica vencimento | Profissionais de saúde |
+
+## Rotas de Fornecedores
+
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/fornecedores` | Lista todos os fornecedores | Público |
+| GET | `/fornecedores/:id` | Busca fornecedor por ID | Público |
+| POST | `/fornecedores` | Cria novo fornecedor | Farmacêuticos e Admins |
+| PUT | `/fornecedores/:id` | Atualiza fornecedor | Farmacêuticos e Admins |
+| DELETE | `/fornecedores/:id` | Remove fornecedor | Apenas Admins |
+| GET | `/fornecedores/busca/nome` | Busca por nome | Público |
+| GET | `/fornecedores/status/:status` | Busca por status | Público |
+
+## Rotas de Pacientes
+
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/pacientes` | Lista todos os pacientes | Profissionais de saúde |
+| GET | `/pacientes/:id` | Busca paciente por ID | Profissionais de saúde |
+| POST | `/pacientes` | Cria novo paciente | Médicos e Admins |
+| PUT | `/pacientes/:id` | Atualiza paciente | Médicos e Admins |
+| DELETE | `/pacientes/:id` | Remove paciente | Apenas Admins |
+| GET | `/pacientes/busca/nome` | Busca por nome | Profissionais de saúde |
+
+## Rotas Protegidas de Exemplo
+
+| Método | Endpoint | Descrição | Acesso |
+|--------|----------|-----------|---------|
+| GET | `/protected/admin` | Área administrativa | Apenas Admins |
+| GET | `/protected/medico` | Área médica | Médicos e Admins |
+| GET | `/protected/farmaceutico` | Área farmacêutica | Farmacêuticos e Admins |
+| GET | `/protected/profissionais` | Área profissionais | Médicos, Farmacêuticos e Admins |
+| GET | `/protected/paciente` | Área do paciente | Qualquer usuário autenticado |
+| GET | `/protected/usuarios` | Lista usuários com permissões | Usuários autenticados |
+
+## Autenticação
+
+Para acessar rotas protegidas, inclua o token JWT no header:
+
+```
+Authorization: Bearer <seu_token_jwt>
 ```
 
-### POST /controle-estoque
+## Filtros e Paginação
 
-```json
-{
-  "medicamento": "ID do medicamento",
-  "medico": "ID do médico",
-  "paciente": "ID do paciente",
-  "quantidade": 10,
-  "observacao": "Observação opcional"
-}
+Os endpoints de listagem suportam os seguintes query parameters:
+
+- **page**: Número da página (padrão: 1)
+- **limit**: Itens por página (padrão: 10)
+- **sortBy**: Campo para ordenação
+- **order**: Direção da ordenação (asc/desc)
+- **Filtros específicos**: Dependem do endpoint
+
+Exemplo:
+```
+GET /medicamentos?page=2&limit=20&sortBy=nome&order=asc
 ```
 
-### PUT /controle-estoque/:id/status
+## Códigos de Status HTTP
 
-```json
-{
-  "status": "CONCLUIDO" // Valores possíveis: RESERVADO, CONCLUIDO, CANCELADO
-}
-```
+- **200**: Sucesso
+- **201**: Criado com sucesso
+- **400**: Erro de validação
+- **401**: Não autenticado
+- **403**: Sem permissão
+- **404**: Não encontrado
+- **500**: Erro interno do servidor
 
-### POST /lotes
-
-```json
-{
-  "codigo": "LOTE123",
-  "produto": "ID do medicamento",
-  "dataFabricacao": "2023-01-01",
-  "dataValidade": "2025-01-01",
-  "quantidade": 500,
-  "fornecedor": "ID do fornecedor",
-  "observacoes": "Observações opcionais"
-}
-```
-
-## Respostas da API
+## Estrutura de Resposta
 
 ### Sucesso
-
 ```json
 {
   "success": true,
@@ -107,7 +151,6 @@ Este diretório contém a definição das rotas da API de Controle de Estoque de
 ```
 
 ### Erro
-
 ```json
 {
   "success": false,
@@ -116,21 +159,44 @@ Este diretório contém a definição das rotas da API de Controle de Estoque de
 }
 ```
 
-## Configuração das Rotas
+## Exemplos de Requisição
 
-As rotas são configuradas utilizando o Express Router e registradas no arquivo index.ts:
+### Login
+```bash
+POST /auth/login
+Content-Type: application/json
 
-```typescript
-import { Router } from 'express';
-import medicamentoRoutes from './medicamentoRoutes';
-import controleEstoqueRoutes from './controleEstoqueRoutes';
-import loteRoutes from './loteRoutes';
+{
+  "email": "medico@exemplo.com",
+  "senha": "senha123"
+}
+```
 
-const router = Router();
+### Criar Medicamento (requer autenticação)
+```bash
+POST /medicamentos
+Authorization: Bearer <token>
+Content-Type: application/json
 
-router.use('/medicamentos', medicamentoRoutes);
-router.use('/controle-estoque', controleEstoqueRoutes);
-router.use('/lotes', loteRoutes);
+{
+  "nome": "Medicamento Exemplo",
+  "descricao": "Descrição do medicamento",
+  "fornecedor": "uuid-do-fornecedor",
+  "quantidade": 100
+}
+```
 
-export default router;
+### Criar Solicitação de Estoque (requer autenticação)
+```bash
+POST /controle-estoque
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "medicamento": "uuid-do-medicamento",
+  "medico": "uuid-do-medico",
+  "paciente": "uuid-do-paciente",
+  "quantidade": 10,
+  "observacao": "Prescrição para tratamento"
+}
 ``` 
