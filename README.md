@@ -68,7 +68,7 @@ npm run migrate
 npm run dev
 ```
 
-## 🔐 **Autenticação JWT (Conforme Matéria)**
+## 🔐 **Autenticação JWT**
 
 ### **Endpoints Básicos**
 
@@ -178,7 +178,7 @@ static async findAll(req: Request, res: Response) {
 }
 ```
 
-### ✅ **Controllers Simples** (Conforme Matéria)
+### ✅ **Controllers Simples**
 ```typescript
 // CRUD básico conforme ensinado
 export class MedicamentoController {
@@ -201,7 +201,7 @@ export class MedicamentoService {
 }
 ```
 
-### ✅ **Filtros Básicos** (Conforme Matéria)
+### ✅ **Filtros Básicos**
 ```typescript
 // Filtros simples conforme ensinado
 async findByNome(nome: string): Promise<IMedicamento[]> {
@@ -209,7 +209,7 @@ async findByNome(nome: string): Promise<IMedicamento[]> {
 }
 ```
 
-### ✅ **DTOs Básicos** (Conforme Matéria)
+### ✅ **DTOs Básicos**
 ```typescript
 // UserDTO sem senha (conceito básico de DTO)
 export class UserDTO {
@@ -221,7 +221,7 @@ export class UserDTO {
 }
 ```
 
-### ✅ **Resposta Padronizada** (Básica)
+### ✅ **Resposta Padronizada**
 ```json
 {
   "success": true,
@@ -230,7 +230,7 @@ export class UserDTO {
 }
 ```
 
-## 🧪 **Testando a API (Simples)**
+## 🧪 **Testando a API**
 
 ### **cURL Básico**
 ```bash
@@ -268,7 +268,7 @@ npm run migrate     # Migrations
 npm run seed        # Seeds
 ```
 
-## 🔒 **Segurança Básica (Conforme Matéria)**
+## 🔒 **Segurança Básica**
 
 - **Bcrypt** para senhas (salt: 10)
 - **JWT** com expiração
