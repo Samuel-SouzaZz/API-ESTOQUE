@@ -1,24 +1,17 @@
-import { IsString, IsEmail, MinLength, IsEnum, IsOptional } from 'class-validator';
-
-// Enum para definir os roles possíveis
-export enum UserRole {
-  ADMIN = 'admin',
-  MANAGER = 'manager',
-  USER = 'user'
-}
+import { UserRole } from '../models/enums/UserRole';
 
 // Interface para criação de usuário
 export interface CreateUserDto {
-  name: string;
+  nome: string;
   email: string;
-  password: string;
+  senha: string;
   role?: UserRole;
 }
 
 // Interface para login
 export interface LoginDto {
   email: string;
-  password: string;
+  senha: string;
 }
 
 // Interface para resposta de autenticação
@@ -26,7 +19,7 @@ export interface AuthResponseDto {
   token: string;
   user: {
     id: string;
-    name: string;
+    nome: string;
     email: string;
     role: UserRole;
   };
