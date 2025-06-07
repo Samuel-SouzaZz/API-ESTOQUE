@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import connectDB from './config/database';
 import routes from './routes';
 
 // Carrega as variáveis de ambiente
@@ -27,10 +26,9 @@ app.use('/api', routes);
 const PORT = process.env.PORT || 5000;
 
 // Inicia o servidor
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`API de Controle de Estoque de Medicamentos iniciada em http://localhost:${PORT}`);
 });
 
 export default app; 
