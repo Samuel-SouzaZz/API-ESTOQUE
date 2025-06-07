@@ -5,7 +5,7 @@ import { StatusControleEstoque } from '../models/enums/StartusControleEstoque';
 
 /**
  * Repositório para gerenciamento de Controle de Estoque
- * Implementa operações CRUD básicas e métodos específicos para solicitações de medicamentos
+ * Implementa operações CRUD básicas conforme conteúdo da disciplina
  */
 export class ControleEstoqueRepository implements IBaseRepository<IControleEstoque> {
   // Simulando um banco de dados em memória para testes
@@ -87,7 +87,7 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Atualiza o status de um controle de estoque
+   * Atualiza o status de um controle de estoque (funcionalidade básica)
    * @param id ID do registro de controle
    * @param status Novo status
    * @returns Promise com o registro atualizado ou null
@@ -97,67 +97,29 @@ export class ControleEstoqueRepository implements IBaseRepository<IControleEstoq
   }
 
   /**
-   * Busca registros de controle de estoque por médico
+   * Busca registros por médico (filtro básico conforme matéria)
    * @param medicoId ID do médico
-   * @returns Promise com lista de registros de controle do médico
+   * @returns Promise com lista de registros do médico
    */
   async findByMedico(medicoId: string): Promise<IControleEstoque[]> {
     return this.controles.filter(c => c.medicoId === medicoId);
   }
 
   /**
-   * Busca registros de controle de estoque por paciente
+   * Busca registros por paciente (filtro básico conforme matéria)
    * @param pacienteId ID do paciente
-   * @returns Promise com lista de registros de controle do paciente
+   * @returns Promise com lista de registros do paciente
    */
   async findByPaciente(pacienteId: string): Promise<IControleEstoque[]> {
     return this.controles.filter(c => c.pacienteId === pacienteId);
   }
 
   /**
-   * Busca registros de controle de estoque por estoque
-   * @param estoqueId ID do estoque
-   * @returns Promise com lista de registros de controle do estoque
-   */
-  async findByEstoque(estoqueId: string): Promise<IControleEstoque[]> {
-    return this.controles.filter(c => c.estoqueId === estoqueId);
-  }
-
-  /**
-   * Busca registros de controle de estoque por status
+   * Busca registros por status (filtro básico conforme matéria)
    * @param status Status a ser filtrado
    * @returns Promise com lista de registros com o status especificado
    */
   async findByStatus(status: string): Promise<IControleEstoque[]> {
     return this.controles.filter(c => c.status === status);
-  }
-
-  /**
-   * Gera um relatório simples de solicitações por período
-   * @param dataInicio Data de início do período
-   * @param dataFim Data de fim do período
-   * @returns Promise com relatório de contagem por status
-   */
-  async relatorioSolicitacoesPorPeriodo(
-    dataInicio: Date, 
-    dataFim: Date
-  ): Promise<Record<string, number>> {
-    const solicitacoes = this.controles.filter(c => 
-      c.createdAt >= dataInicio && c.createdAt <= dataFim
-    );
-    
-    const relatorio: Record<string, number> = {
-      [StatusControleEstoque.Reservado]: 0,
-      [StatusControleEstoque.Concluido]: 0,
-      [StatusControleEstoque.Cancelado]: 0
-    };
-    
-    solicitacoes.forEach(s => {
-      if (relatorio[s.status] !== undefined) {
-        relatorio[s.status]++;
-      }
-    });
-    
-    return relatorio;
   }
 } 

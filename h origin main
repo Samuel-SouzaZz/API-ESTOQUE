@@ -1,3 +1,0 @@
-[33mba4016d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m fix: corrige erros de TypeScript e atualiza documentação - Corrige tipo ControllerFunction, importações dos enums e atualiza README
-[33ma0329e9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Planejamento Proxima Aula
-[33m917b4af[m Conversão para TypeScript e implementação de novas rotas

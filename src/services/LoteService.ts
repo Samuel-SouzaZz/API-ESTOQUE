@@ -3,7 +3,7 @@ import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Lotes
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa a lógica de negócios básica conforme conteúdo da disciplina
  */
 export class LoteService {
   /**
@@ -25,8 +25,8 @@ export class LoteService {
    */
   async create(data: Partial<ILote>): Promise<ILote> {
     // Validação básica conforme matéria
-    if (!data.codigo) {
-      throw new Error('Código é obrigatório');
+    if (!data.produtoId) {
+      throw new Error('Produto é obrigatório');
     }
 
     if (!data.dataValidade) {
@@ -61,17 +61,14 @@ export class LoteService {
    * Busca lotes vencidos (funcionalidade básica conforme matéria)
    */
   async findLotesVencidos(): Promise<ILote[]> {
-    const dataAtual = new Date();
-    return repositories.loteRepository.findLotesVencidos(dataAtual);
+    return repositories.loteRepository.findLotesVencidos();
   }
 
   /**
    * Busca lotes próximos do vencimento (funcionalidade básica conforme matéria)
    */
   async findLotesProximosVencimento(): Promise<ILote[]> {
-    const diasLimite = 30; // 30 dias - valor fixo para simplicidade
-    const dataAtual = new Date();
-    return repositories.loteRepository.findLotesProximosVencimento(diasLimite, dataAtual);
+    return repositories.loteRepository.findLotesProximosVencimento();
   }
 
   /**
