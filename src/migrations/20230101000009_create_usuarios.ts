@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('nome').notNullable();
     table.string('email').notNullable().unique();
     table.string('senha').notNullable();
-    table.string('role').defaultTo('user'); // user, admin, farmaceutico, medico
+    table.string('role').defaultTo('PACIENTE'); // ADMIN, MEDICO, FARMACEUTICO, PACIENTE
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });

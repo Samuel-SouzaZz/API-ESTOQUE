@@ -222,23 +222,63 @@ router.delete('/medicamentos/:id',
 | `/busca/nome` | GET | Público | Filtro por nome |
 | `/status/:status` | GET | Público | Filtro por status |
 
-## 💾 **Armazenamento de Dados (Simplificado para Disciplina)**
+## 💾 **Banco de Dados e Migrações**
 
-### **Repositórios em Memória**
-Para facilitar o aprendizado e foco nos conceitos da disciplina:
-- Todos os dados armazenados em **arrays em memória**
-- **Sem banco de dados real** - simplicidade didática
-- **UUIDs** para identificação única
-- **Dados persistem** apenas durante execução
+### **Knex.js - Configuração Conforme Matéria**
+- **SQLite** para desenvolvimento (banco local)
+- **PostgreSQL** para produção
+- **Migrations** para versionamento da estrutura
+- **Seeds** para dados iniciais de teste
 
-### **Entidades Principais**
+### **Migrations Implementadas**
+Conforme conceitos estudados - funções `up` e `down`:
+
+| Ordem | Migration | Descrição |
+|-------|-----------|-----------|
+| 00 | `create_fornecedores` | Tabela de fornecedores |
+| 01 | `create_farmacia_popular` | Farmácia popular |
+| 02 | `create_medico` | Médicos prescreventes |
+| 03 | `create_paciente` | Pacientes do sistema |
+| 04 | `create_farmaceutico` | Farmacêuticos |
+| 05 | `create_medicamentos` | Catálogo de medicamentos |
+| 06 | `create_lotes` | Controle de validade |
+| 07 | `create_estoque` | Estoque geral |
+| 08 | `create_controle_estoque` | Movimentações |
+| 09 | `create_usuarios` | **Autenticação e roles** |
+
+### **Seeds para Dados de Teste**
+Conforme estudado - dados iniciais fictícios:
+
+| Seed | Descrição | Quantidade |
+|------|-----------|------------|
+| `00_usuarios` | **Usuários para teste** | 6 usuários |
+| `01_fornecedores` | Fornecedores fictícios | 4 fornecedores |
+| `02_medicos` | Médicos de teste | 4 médicos |
+| `03_pacientes` | Pacientes fictícios | Variados |
+| `04_medicamentos` | Medicamentos básicos | 6 medicamentos |
+
+### **Usuários de Teste Criados**
 ```typescript
-- usuarios[]          // Autenticação e roles
-- medicamentos[]      // Catálogo de medicamentos
-- lotes[]            // Controle de validade
-- controle_estoque[] // Solicitações
-- fornecedores[]     // Fornecedores
-- pacientes[]        // Pacientes
+// Senha padrão para todos: "123456" (criptografada com bcrypt)
+- admin@sistema.com           // ADMIN
+- carlos.medico@hospital.com  // MEDICO  
+- ana.farmaceutica@farmacia.com // FARMACEUTICO
+- joao.paciente@email.com     // PACIENTE
+```
+
+### **Comandos Knex (Conforme Matéria)**
+```bash
+# Executar migrations
+npx knex migrate:latest
+
+# Preencher com dados de teste  
+npx knex seed:run
+
+# Desfazer última migration
+npx knex migrate:rollback
+
+# Status das migrations
+npx knex migrate:status
 ```
 
 ## 🎯 **Conceitos Aplicados (Conforme Disciplina)**
@@ -361,16 +401,55 @@ export class UserFilterDTO {
 
 ## 🧪 **Testando a API**
 
-### **cURL Básico**
+### **Usuários de Teste Disponíveis**
+Após executar `npx knex seed:run`, use estes usuários:
+
+```json
+// ADMIN - Acesso total
+{
+  "email": "admin@sistema.com",
+  "senha": "123456"
+}
+
+// MEDICO - Prescrições e pacientes  
+{
+  "email": "carlos.medico@hospital.com", 
+  "senha": "123456"
+}
+
+// FARMACEUTICO - Medicamentos e estoque
+{
+  "email": "ana.farmaceutica@farmacia.com",
+  "senha": "123456"
+}
+
+// PACIENTE - Acesso limitado
+{
+  "email": "joao.paciente@email.com",
+  "senha": "123456"
+}
+```
+
+### **Fluxo de Teste Completo**
 ```bash
-# Login
+# 1. Executar migrations e seeds
+npx knex migrate:latest
+npx knex seed:run
+
+# 2. Login como ADMIN
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "test@test.com", "senha": "123456"}'
+  -d '{"email": "admin@sistema.com", "senha": "123456"}'
 
-# Usar token
+# 3. Usar token retornado
 curl -X GET http://localhost:5000/api/medicamentos \
-  -H "Authorization: Bearer <token>"
+  -H "Authorization: Bearer <token_recebido>"
+
+# 4. Testar diferentes roles
+curl -X POST http://localhost:5000/api/medicamentos \
+  -H "Authorization: Bearer <token_farmaceutico>" \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Novo Medicamento", "descricao": "Teste"}'
 ```
 
 ## ⚙️ **Variáveis de Ambiente**
