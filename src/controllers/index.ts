@@ -1,21 +1,20 @@
 /**
  * Arquivo para centralizar e facilitar a exportação dos controllers
+ * Versão simplificada conforme conteúdo da disciplina
  */
 import { MedicamentoController } from './MedicamentoController';
 import { ControleEstoqueController } from './ControleEstoqueController';
 import { LoteController } from './LoteController';
 import { FornecedorController } from './FornecedorController';
 import { PacienteController } from './PacienteController';
-import { ApiResponse, successResponse, errorResponse } from './types';
+import { AuthController } from './AuthControllers';
 
-// Exportação de todos os controllers e tipos
+// Exportação de todos os controllers
 export {
   MedicamentoController,
   ControleEstoqueController,
   LoteController,
   FornecedorController,
   PacienteController,
-  ApiResponse,
-  successResponse,
-  errorResponse
+  AuthController
 }; 

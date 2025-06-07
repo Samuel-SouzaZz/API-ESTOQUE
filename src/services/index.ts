@@ -1,30 +1,23 @@
 /**
  * Arquivo para centralizar e facilitar a exportação dos serviços
+ * Versão simplificada conforme conteúdo da disciplina
  */
-import { IBaseService } from './BaseService';
+import { AuthService } from './AuthService';
 import { MedicamentoService } from './MedicamentoService';
-import { ControleEstoqueService } from './ControleEstoqueService';
 import { LoteService } from './LoteService';
+import { ControleEstoqueService } from './ControleEstoqueService';
 
-// Exportação de todos os serviços
+// Services simples conforme conteúdo da disciplina
+export const services = {
+  authService: new AuthService(),
+  medicamentoService: new MedicamentoService(),
+  loteService: new LoteService(),
+  controleEstoqueService: new ControleEstoqueService()
+};
+
 export {
-  IBaseService,
+  AuthService,
   MedicamentoService,
-  ControleEstoqueService,
-  LoteService
-};
-
-/**
- * Função para criar instâncias dos serviços
- * Facilita a obtenção de instâncias únicas para uso nos controllers
- */
-export const createServices = () => {
-  return {
-    medicamentoService: new MedicamentoService(),
-    controleEstoqueService: new ControleEstoqueService(),
-    loteService: new LoteService()
-  };
-};
-
-// Serviços singleton para uso global
-export const services = createServices(); 
+  LoteService,
+  ControleEstoqueService
+}; 

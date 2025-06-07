@@ -1,209 +1,268 @@
 import { Request, Response } from 'express';
-import { ControllerFunction, successResponse, errorResponse } from './types';
-import { services } from '../services';
+import { ControleEstoqueService } from '../services/ControleEstoqueService';
 
 /**
- * Classe controladora para operações com controle de estoque
+ * Controller para controle de estoque
+ * Implementa operações básicas conforme conteúdo da disciplina
  */
 export class ControleEstoqueController {
-  /**
-   * Busca todos os registros de controle de estoque
-   * @param req Requisição Express
-   * @param res Resposta Express
-   */
-  static findAll: ControllerFunction = async (req: Request, res: Response) => {
-    try {
-      const controles = await services.controleEstoqueService.findAll();
-      res.json(successResponse('Solicitações recuperadas com sucesso', controles));
-    } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar solicitações', error.message));
-    }
-  };
+  private static controleEstoqueService = new ControleEstoqueService();
 
   /**
-   * Busca um registro de controle de estoque por ID
-   * @param req Requisição Express contendo o ID do controle
-   * @param res Resposta Express
+   * Busca todas as solicitações
    */
-  static findById: ControllerFunction = async (req: Request, res: Response) => {
+  static async findAll(req: Request, res: Response) {
+    try {
+      const controles = await ControleEstoqueController.controleEstoqueService.findAll();
+      res.json({
+        success: true,
+        message: 'Solicitações encontradas',
+        data: controles
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar solicitações',
+        error: error.message
+      });
+    }
+  }
+
+  /**
+   * Busca solicitação por ID
+   */
+  static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const controle = await services.controleEstoqueService.findById(id);
+      const controle = await ControleEstoqueController.controleEstoqueService.findById(id);
       
       if (!controle) {
-        return res.status(404).json(errorResponse('Solicitação não encontrada'));
+        return res.status(404).json({
+          success: false,
+          message: 'Solicitação não encontrada'
+        });
       }
       
-      res.json(successResponse('Solicitação recuperada com sucesso', controle));
+      res.json({
+        success: true,
+        message: 'Solicitação encontrada',
+        data: controle
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar solicitação', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar solicitação',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Cria um novo registro de controle de estoque (solicitação de medicamento)
-   * @param req Requisição Express contendo os dados da solicitação
-   * @param res Resposta Express
+   * Cria nova solicitação
    */
-  static create: ControllerFunction = async (req: Request, res: Response) => {
+  static async create(req: Request, res: Response) {
     try {
-      const controle = await services.controleEstoqueService.create(req.body);
-      res.status(201).json(successResponse('Solicitação criada com sucesso', controle));
+      const controle = await ControleEstoqueController.controleEstoqueService.create(req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Solicitação criada',
+        data: controle
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao criar solicitação', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao criar solicitação',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza um registro de controle de estoque existente
-   * @param req Requisição Express contendo o ID e dados atualizados da solicitação
-   * @param res Resposta Express
+   * Atualiza solicitação
    */
-  static update: ControllerFunction = async (req: Request, res: Response) => {
+  static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const controle = await services.controleEstoqueService.update(id, req.body);
+      const controle = await ControleEstoqueController.controleEstoqueService.update(id, req.body);
       
       if (!controle) {
-        return res.status(404).json(errorResponse('Solicitação não encontrada'));
+        return res.status(404).json({
+          success: false,
+          message: 'Solicitação não encontrada'
+        });
       }
       
-      res.json(successResponse('Solicitação atualizada com sucesso', controle));
+      res.json({
+        success: true,
+        message: 'Solicitação atualizada',
+        data: controle
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar solicitação', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar solicitação',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Remove um registro de controle de estoque
-   * @param req Requisição Express contendo o ID da solicitação
-   * @param res Resposta Express
+   * Remove solicitação
    */
-  static delete: ControllerFunction = async (req: Request, res: Response) => {
+  static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await services.controleEstoqueService.delete(id);
+      const result = await ControleEstoqueController.controleEstoqueService.delete(id);
       
       if (!result) {
-        return res.status(404).json(errorResponse('Solicitação não encontrada'));
+        return res.status(404).json({
+          success: false,
+          message: 'Solicitação não encontrada'
+        });
       }
       
-      res.json(successResponse('Solicitação removida com sucesso'));
+      res.json({
+        success: true,
+        message: 'Solicitação removida'
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao remover solicitação', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao remover solicitação',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza o status de um controle de estoque
-   * @param req Requisição Express contendo o ID da solicitação e o novo status
-   * @param res Resposta Express
+   * Atualiza status (funcionalidade básica)
    */
-  static atualizarStatus: ControllerFunction = async (req: Request, res: Response) => {
+  static async atualizarStatus(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const { status } = req.body;
       
       if (!status) {
-        return res.status(400).json(errorResponse('Status não informado'));
+        return res.status(400).json({
+          success: false,
+          message: 'Status é obrigatório'
+        });
       }
       
-      const controle = await services.controleEstoqueService.atualizarStatus(id, status);
+      const controle = await ControleEstoqueController.controleEstoqueService.atualizarStatus(id, status);
       
       if (!controle) {
-        return res.status(404).json(errorResponse('Solicitação não encontrada'));
+        return res.status(404).json({
+          success: false,
+          message: 'Solicitação não encontrada'
+        });
       }
       
-      res.json(successResponse('Status da solicitação atualizado com sucesso', controle));
+      res.json({
+        success: true,
+        message: 'Status atualizado',
+        data: controle
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar status da solicitação', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar status',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca solicitações por médico
-   * @param req Requisição Express contendo o ID do médico
-   * @param res Resposta Express
+   * Busca por médico (filtro básico)
    */
-  static findByMedico: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByMedico(req: Request, res: Response) {
     try {
       const { medicoId } = req.params;
+      const controles = await ControleEstoqueController.controleEstoqueService.findByMedico(medicoId);
       
-      if (!medicoId) {
-        return res.status(400).json(errorResponse('ID do médico não informado'));
-      }
-      
-      const controles = await services.controleEstoqueService.findByMedico(medicoId);
-      res.json(successResponse('Solicitações recuperadas com sucesso', controles));
+      res.json({
+        success: true,
+        message: 'Busca por médico realizada',
+        data: controles
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar solicitações por médico', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por médico',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca solicitações por paciente
-   * @param req Requisição Express contendo o ID do paciente
-   * @param res Resposta Express
+   * Busca por paciente (filtro básico)
    */
-  static findByPaciente: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByPaciente(req: Request, res: Response) {
     try {
       const { pacienteId } = req.params;
+      const controles = await ControleEstoqueController.controleEstoqueService.findByPaciente(pacienteId);
       
-      if (!pacienteId) {
-        return res.status(400).json(errorResponse('ID do paciente não informado'));
-      }
-      
-      const controles = await services.controleEstoqueService.findByPaciente(pacienteId);
-      res.json(successResponse('Solicitações recuperadas com sucesso', controles));
+      res.json({
+        success: true,
+        message: 'Busca por paciente realizada',
+        data: controles
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar solicitações por paciente', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por paciente',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca solicitações por status
-   * @param req Requisição Express contendo o status a ser filtrado
-   * @param res Resposta Express
+   * Busca por status (filtro básico)
    */
-  static findByStatus: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByStatus(req: Request, res: Response) {
     try {
       const { status } = req.query;
       
-      if (!status || typeof status !== 'string') {
-        return res.status(400).json(errorResponse('Status não informado ou inválido'));
+      if (!status) {
+        return res.status(400).json({
+          success: false,
+          message: 'Status é obrigatório'
+        });
       }
       
-      const controles = await services.controleEstoqueService.findByStatus(status);
-      res.json(successResponse('Solicitações recuperadas com sucesso', controles));
+      const controles = await ControleEstoqueController.controleEstoqueService.findByStatus(status as string);
+      res.json({
+        success: true,
+        message: 'Busca por status realizada',
+        data: controles
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar solicitações por status', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por status',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Gera relatório de solicitações por período
-   * @param req Requisição Express contendo as datas de início e fim
-   * @param res Resposta Express
+   * Relatório simples (funcionalidade básica)
    */
-  static relatorio: ControllerFunction = async (req: Request, res: Response) => {
+  static async relatorio(req: Request, res: Response) {
     try {
-      const { dataInicio, dataFim } = req.query;
+      const relatorio = await ControleEstoqueController.controleEstoqueService.relatorio();
       
-      if (!dataInicio || !dataFim || typeof dataInicio !== 'string' || typeof dataFim !== 'string') {
-        return res.status(400).json(errorResponse('Datas de início e fim são obrigatórias'));
-      }
-      
-      const inicio = new Date(dataInicio);
-      const fim = new Date(dataFim);
-      
-      if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
-        return res.status(400).json(errorResponse('Formato de data inválido'));
-      }
-      
-      const relatorio = await services.controleEstoqueService.relatorioSolicitacoesPorPeriodo(inicio, fim);
-      res.json(successResponse('Relatório gerado com sucesso', relatorio));
+      res.json({
+        success: true,
+        message: 'Relatório gerado',
+        data: relatorio
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao gerar relatório', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao gerar relatório',
+        error: error.message
+      });
     }
-  };
+  }
 } 

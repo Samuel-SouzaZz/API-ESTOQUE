@@ -1,6 +1,6 @@
 import { db } from '../config/database';
 import { IUsuario } from '../models/Usuario';
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from '../models/enums/UserRole';
 
 export class UsuarioRepository {
   /**

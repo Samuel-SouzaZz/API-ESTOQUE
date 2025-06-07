@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/AuthService';
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from '../models/enums/UserRole';
 
+/**
+ * Controller de autenticação
+ * Implementa JWT conforme conteúdo da disciplina
+ */
 export class AuthController {
   private authService: AuthService;
 
@@ -10,124 +14,94 @@ export class AuthController {
   }
 
   /**
-   * Registra um novo usuário
-   * POST /auth/register
+   * Registro de usuário
    */
   register = async (req: Request, res: Response): Promise<void> => {
     try {
       const { nome, email, senha, role } = req.body;
 
-      // Validações básicas
+      // Validações básicas conforme matéria
       if (!nome || !email || !senha) {
         res.status(400).json({
-          error: 'Dados obrigatórios',
+          success: false,
           message: 'Nome, email e senha são obrigatórios'
         });
         return;
       }
 
-      // Validação de email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        res.status(400).json({
-          error: 'Email inválido',
-          message: 'Por favor, forneça um email válido'
-        });
-        return;
-      }
-
-      // Validação de senha
-      if (senha.length < 6) {
-        res.status(400).json({
-          error: 'Senha inválida',
-          message: 'A senha deve ter pelo menos 6 caracteres'
-        });
-        return;
-      }
-
-      // Validação de role
-      const validRoles = Object.values(UserRole);
       const userRole = role || UserRole.PACIENTE;
-      
-      if (!validRoles.includes(userRole)) {
-        res.status(400).json({
-          error: 'Role inválido',
-          message: `Role deve ser um dos seguintes: ${validRoles.join(', ')}`
-        });
-        return;
-      }
-
-      // Registra o usuário
       const novoUsuario = await this.authService.register(nome, email, senha, userRole);
 
-      // Remove a senha do retorno
+      // Remove a senha do retorno (DTO conforme matéria)
       const { senha: _, ...usuarioSemSenha } = novoUsuario;
 
       res.status(201).json({
+        success: true,
         message: 'Usuário registrado com sucesso',
-        usuario: usuarioSemSenha
+        data: usuarioSemSenha
       });
 
     } catch (error: any) {
       if (error.message === 'Usuário já existe com este email') {
         res.status(409).json({
-          error: 'Conflito',
+          success: false,
           message: error.message
         });
         return;
       }
 
       res.status(500).json({
-        error: 'Erro interno do servidor',
-        message: 'Erro ao registrar usuário'
+        success: false,
+        message: 'Erro ao registrar usuário',
+        error: error.message
       });
     }
   };
 
   /**
-   * Faz login do usuário
-   * POST /auth/login
+   * Login de usuário
    */
   login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, senha } = req.body;
 
-      // Validações básicas
+      // Validações básicas conforme matéria
       if (!email || !senha) {
         res.status(400).json({
-          error: 'Dados obrigatórios',
+          success: false,
           message: 'Email e senha são obrigatórios'
         });
         return;
       }
 
-      // Faz o login
+      // Faz o login e gera JWT conforme matéria
       const resultado = await this.authService.login(email, senha);
 
       res.status(200).json({
+        success: true,
         message: 'Login realizado com sucesso',
-        ...resultado
+        data: resultado
       });
 
     } catch (error: any) {
       if (error.message === 'Email ou senha incorretos') {
         res.status(401).json({
-          error: 'Credenciais inválidas',
+          success: false,
           message: error.message
         });
         return;
       }
 
       res.status(500).json({
-        error: 'Erro interno do servidor',
-        message: 'Erro ao fazer login'
+        success: false,
+        message: 'Erro ao fazer login',
+        error: error.message
       });
     }
   };
 
   /**
-   * Verifica se o token é válido
-   * GET /auth/verify
+   * Verifica token JWT (conforme matéria)
    */
   verifyToken = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -135,8 +109,8 @@ export class AuthController {
       
       if (!authHeader) {
         res.status(401).json({
-          error: 'Token não fornecido',
-          message: 'Token de acesso requerido'
+          success: false,
+          message: 'Token não fornecido'
         });
         return;
       }
@@ -145,18 +119,19 @@ export class AuthController {
       
       if (bearer !== 'Bearer' || !token) {
         res.status(401).json({
-          error: 'Formato de token inválido',
-          message: 'Use o formato: Bearer <token>'
+          success: false,
+          message: 'Formato inválido. Use: Bearer <token>'
         });
         return;
       }
 
-      // Verifica o token
+      // Verifica o token conforme matéria
       const decoded = this.authService.verifyToken(token);
 
       res.status(200).json({
+        success: true,
         message: 'Token válido',
-        usuario: {
+        data: {
           id: decoded.id,
           name: decoded.name,
           email: decoded.email,
@@ -166,35 +141,37 @@ export class AuthController {
 
     } catch (error: any) {
       res.status(401).json({
-        error: 'Token inválido',
-        message: error.message
+        success: false,
+        message: 'Token inválido',
+        error: error.message
       });
     }
   };
 
   /**
-   * Retorna informações do usuário logado
-   * GET /auth/me
+   * Dados do usuário logado (rota protegida conforme matéria)
    */
   me = async (req: Request, res: Response): Promise<void> => {
     try {
       if (!req.user) {
         res.status(401).json({
-          error: 'Usuário não autenticado',
-          message: 'Faça login para acessar este recurso'
+          success: false,
+          message: 'Usuário não autenticado'
         });
         return;
       }
 
       res.status(200).json({
+        success: true,
         message: 'Dados do usuário',
-        usuario: req.user
+        data: req.user
       });
 
     } catch (error: any) {
       res.status(500).json({
-        error: 'Erro interno do servidor',
-        message: 'Erro ao buscar dados do usuário'
+        success: false,
+        message: 'Erro ao buscar dados do usuário',
+        error: error.message
       });
     }
   };

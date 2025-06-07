@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { UsuarioRepository } from '../repositorio/UsuarioRepository';
 import { IUsuario } from '../models/Usuario';
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from '../models/enums/UserRole';
 
 export class AuthService {
   private usuarioRepository: UsuarioRepository;

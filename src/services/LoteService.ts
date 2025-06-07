@@ -1,15 +1,13 @@
-import { IBaseService } from './BaseService';
 import { ILote } from '../models/Lote';
 import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Lotes
- * Implementa a lógica de negócios para operações com lotes de medicamentos
+ * Implementa operações básicas conforme conteúdo da disciplina
  */
-export class LoteService implements IBaseService<ILote> {
+export class LoteService {
   /**
-   * Busca todos os lotes cadastrados
-   * @returns Promise com lista de lotes
+   * Busca todos os lotes
    */
   async findAll(): Promise<ILote[]> {
     return repositories.loteRepository.findAll();
@@ -17,8 +15,6 @@ export class LoteService implements IBaseService<ILote> {
 
   /**
    * Busca um lote pelo ID
-   * @param id ID do lote
-   * @returns Promise com o lote encontrado ou null
    */
   async findById(id: string): Promise<ILote | null> {
     return repositories.loteRepository.findById(id);
@@ -26,135 +22,68 @@ export class LoteService implements IBaseService<ILote> {
 
   /**
    * Cria um novo lote
-   * @param data Dados do lote
-   * @returns Promise com o lote criado
-   * @throws Error se os dados obrigatórios não forem fornecidos
    */
   async create(data: Partial<ILote>): Promise<ILote> {
-    // Validação de dados obrigatórios
+    // Validação básica conforme matéria
     if (!data.codigo) {
-      throw new Error('O código do lote é obrigatório');
+      throw new Error('Código é obrigatório');
     }
 
     if (!data.dataValidade) {
-      throw new Error('A data de validade do lote é obrigatória');
-    }
-
-    if (!data.produtoId) {
-      throw new Error('O produto (medicamento) do lote é obrigatório');
-    }
-
-    // Verifica se o produto (medicamento) existe
-    const medicamento = await repositories.medicamentoRepository.findById(data.produtoId);
-    if (!medicamento) {
-      throw new Error('Medicamento não encontrado');
-    }
-
-    // Verifica se já existe lote com o mesmo código
-    const loteExistente = await repositories.loteRepository.findByCodigo(data.codigo);
-    if (loteExistente) {
-      throw new Error('Já existe um lote com este código');
+      throw new Error('Data de validade é obrigatória');
     }
 
     return repositories.loteRepository.create(data);
   }
 
   /**
-   * Atualiza um lote existente
-   * @param id ID do lote
-   * @param data Dados para atualização
-   * @returns Promise com o lote atualizado ou null
+   * Atualiza um lote
    */
   async update(id: string, data: Partial<ILote>): Promise<ILote | null> {
-    // Verifica se o lote existe
-    const loteExistente = await this.findById(id);
-    if (!loteExistente) {
-      return null;
-    }
-
-    // Se estiver alterando o código, verifica se o novo código já está em uso
-    if (data.codigo && data.codigo !== loteExistente.codigo) {
-      const loteMesmoCodigo = await repositories.loteRepository.findByCodigo(data.codigo);
-      if (loteMesmoCodigo && loteMesmoCodigo.id !== id) {
-        throw new Error('Já existe um lote com este código');
-      }
-    }
-
-    // Se estiver alterando o produto, verifica se o novo produto existe
-    if (data.produtoId && data.produtoId !== loteExistente.produtoId) {
-      const medicamento = await repositories.medicamentoRepository.findById(data.produtoId);
-      if (!medicamento) {
-        throw new Error('Medicamento não encontrado');
-      }
-    }
-
     return repositories.loteRepository.update(id, data);
   }
 
   /**
    * Remove um lote
-   * @param id ID do lote
-   * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    // Verifica se o lote existe
-    const loteExistente = await this.findById(id);
-    if (!loteExistente) {
-      return false;
-    }
-
-    // Verifica se há estoque associado a este lote
-    const estoqueAssociado = await repositories.estoqueRepository.findByLote(id);
-    if (estoqueAssociado.length > 0) {
-      throw new Error('Não é possível excluir um lote que possui itens em estoque');
-    }
-
     return repositories.loteRepository.delete(id);
   }
 
   /**
-   * Busca lotes por produto
-   * @param produtoId ID do produto
-   * @returns Promise com lista de lotes do produto
+   * Busca lotes por produto (filtro básico conforme matéria)
    */
   async findByProduto(produtoId: string): Promise<ILote[]> {
     return repositories.loteRepository.findByProduto(produtoId);
   }
 
   /**
-   * Busca lotes vencidos
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
-   * @returns Promise com lista de lotes vencidos
+   * Busca lotes vencidos (funcionalidade básica conforme matéria)
    */
-  async findLotesVencidos(dataReferencia: Date = new Date()): Promise<ILote[]> {
-    return repositories.loteRepository.findLotesVencidos(dataReferencia);
+  async findLotesVencidos(): Promise<ILote[]> {
+    const dataAtual = new Date();
+    return repositories.loteRepository.findLotesVencidos(dataAtual);
   }
 
   /**
-   * Busca lotes próximos do vencimento
-   * @param diasLimite Quantidade de dias limite para o vencimento
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
-   * @returns Promise com lista de lotes próximos do vencimento
+   * Busca lotes próximos do vencimento (funcionalidade básica conforme matéria)
    */
-  async findLotesProximosVencimento(
-    diasLimite: number = 30,
-    dataReferencia: Date = new Date()
-  ): Promise<ILote[]> {
-    return repositories.loteRepository.findLotesProximosVencimento(diasLimite, dataReferencia);
+  async findLotesProximosVencimento(): Promise<ILote[]> {
+    const diasLimite = 30; // 30 dias - valor fixo para simplicidade
+    const dataAtual = new Date();
+    return repositories.loteRepository.findLotesProximosVencimento(diasLimite, dataAtual);
   }
 
   /**
-   * Verifica se um lote está vencido
-   * @param id ID do lote
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
-   * @returns Promise com boolean indicando se o lote está vencido
+   * Verifica se um lote está vencido (funcionalidade básica conforme matéria)
    */
-  async verificarVencimento(id: string, dataReferencia: Date = new Date()): Promise<boolean> {
+  async verificarVencimento(id: string): Promise<boolean> {
     const lote = await this.findById(id);
     if (!lote) {
       throw new Error('Lote não encontrado');
     }
 
-    return lote.dataValidade < dataReferencia;
+    const dataAtual = new Date();
+    return lote.dataValidade < dataAtual;
   }
 } 

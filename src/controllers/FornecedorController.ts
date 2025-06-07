@@ -1,141 +1,185 @@
 import { Request, Response } from 'express';
-import { ControllerFunction, successResponse, errorResponse } from './types';
 import { repositories } from '../repositorio';
 
 /**
- * Classe controladora para operações com fornecedores
+ * Controller para fornecedores
+ * Implementa CRUD básico conforme conteúdo da disciplina
  */
 export class FornecedorController {
   /**
    * Busca todos os fornecedores
-   * @param req Requisição Express
-   * @param res Resposta Express
    */
-  static findAll: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findAll(req: Request, res: Response) {
     try {
       const fornecedores = await repositories.fornecedorRepository.findAll();
-      res.json(successResponse('Fornecedores recuperados com sucesso', fornecedores));
+      res.json({
+        success: true,
+        message: 'Fornecedores encontrados',
+        data: fornecedores
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar fornecedores', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar fornecedores',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca um fornecedor por ID
-   * @param req Requisição Express contendo o ID do fornecedor
-   * @param res Resposta Express
+   * Busca fornecedor por ID
    */
-  static findById: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const fornecedor = await repositories.fornecedorRepository.findById(id);
       
       if (!fornecedor) {
-        res.status(404).json(errorResponse('Fornecedor não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Fornecedor não encontrado'
+        });
       }
       
-      res.json(successResponse('Fornecedor recuperado com sucesso', fornecedor));
+      res.json({
+        success: true,
+        message: 'Fornecedor encontrado',
+        data: fornecedor
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar fornecedor', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar fornecedor',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Cria um novo fornecedor
-   * @param req Requisição Express contendo os dados do fornecedor
-   * @param res Resposta Express
+   * Cria novo fornecedor
    */
-  static create: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async create(req: Request, res: Response) {
     try {
       const fornecedor = await repositories.fornecedorRepository.create(req.body);
-      res.status(201).json(successResponse('Fornecedor criado com sucesso', fornecedor));
+      res.status(201).json({
+        success: true,
+        message: 'Fornecedor criado',
+        data: fornecedor
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao criar fornecedor', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao criar fornecedor',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza um fornecedor existente
-   * @param req Requisição Express contendo o ID e dados atualizados do fornecedor
-   * @param res Resposta Express
+   * Atualiza fornecedor
    */
-  static update: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const fornecedor = await repositories.fornecedorRepository.update(id, req.body);
       
       if (!fornecedor) {
-        res.status(404).json(errorResponse('Fornecedor não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Fornecedor não encontrado'
+        });
       }
       
-      res.json(successResponse('Fornecedor atualizado com sucesso', fornecedor));
+      res.json({
+        success: true,
+        message: 'Fornecedor atualizado',
+        data: fornecedor
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar fornecedor', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar fornecedor',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Remove um fornecedor
-   * @param req Requisição Express contendo o ID do fornecedor
-   * @param res Resposta Express
+   * Remove fornecedor
    */
-  static delete: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const result = await repositories.fornecedorRepository.delete(id);
       
       if (!result) {
-        res.status(404).json(errorResponse('Fornecedor não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Fornecedor não encontrado'
+        });
       }
       
-      res.json(successResponse('Fornecedor removido com sucesso'));
+      res.json({
+        success: true,
+        message: 'Fornecedor removido'
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao remover fornecedor', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao remover fornecedor',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca fornecedores por nome
-   * @param req Requisição Express contendo o nome a ser pesquisado
-   * @param res Resposta Express
+   * Busca por nome (filtro básico)
    */
-  static findByNome: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findByNome(req: Request, res: Response) {
     try {
       const { nome } = req.query;
       
-      if (!nome || typeof nome !== 'string') {
-        res.status(400).json(errorResponse('Nome não informado ou inválido'));
-        return;
+      if (!nome) {
+        return res.status(400).json({
+          success: false,
+          message: 'Nome é obrigatório'
+        });
       }
       
-      const fornecedores = await repositories.fornecedorRepository.findByNome(nome);
-      res.json(successResponse('Fornecedores recuperados com sucesso', fornecedores));
+      const fornecedores = await repositories.fornecedorRepository.findByNome(nome as string);
+      res.json({
+        success: true,
+        message: 'Busca por nome realizada',
+        data: fornecedores
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar fornecedores por nome', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por nome',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca fornecedores por status
-   * @param req Requisição Express contendo o status a ser filtrado
-   * @param res Resposta Express
+   * Busca por status (filtro básico)
    */
-  static findByStatus: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findByStatus(req: Request, res: Response) {
     try {
       const { status } = req.params;
-      
-      if (!status) {
-        res.status(400).json(errorResponse('Status não informado'));
-        return;
-      }
-      
       const fornecedores = await repositories.fornecedorRepository.findByStatus(status);
-      res.json(successResponse('Fornecedores recuperados com sucesso', fornecedores));
+      
+      res.json({
+        success: true,
+        message: 'Busca por status realizada',
+        data: fornecedores
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar fornecedores por status', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por status',
+        error: error.message
+      });
     }
-  };
+  }
 } 

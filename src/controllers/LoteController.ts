@@ -1,220 +1,220 @@
 import { Request, Response } from 'express';
-import { ControllerFunction, successResponse, errorResponse } from './types';
-import { services } from '../services';
+import { LoteService } from '../services/LoteService';
 
 /**
- * Classe controladora para operações com lotes de medicamentos
+ * Controller para lotes de medicamentos
+ * Implementa operações básicas conforme conteúdo da disciplina
  */
 export class LoteController {
+  private static loteService = new LoteService();
+
   /**
    * Busca todos os lotes
-   * @param req Requisição Express
-   * @param res Resposta Express
    */
-  static findAll: ControllerFunction = async (req: Request, res: Response) => {
+  static async findAll(req: Request, res: Response) {
     try {
-      const lotes = await services.loteService.findAll();
-      res.json(successResponse('Lotes recuperados com sucesso', lotes));
+      const lotes = await LoteController.loteService.findAll();
+      res.json({
+        success: true,
+        message: 'Lotes encontrados',
+        data: lotes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar lotes', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar lotes',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca um lote por ID
-   * @param req Requisição Express contendo o ID do lote
-   * @param res Resposta Express
+   * Busca lote por ID
    */
-  static findById: ControllerFunction = async (req: Request, res: Response) => {
+  static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const lote = await services.loteService.findById(id);
+      const lote = await LoteController.loteService.findById(id);
       
       if (!lote) {
-        return res.status(404).json(errorResponse('Lote não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Lote não encontrado'
+        });
       }
       
-      res.json(successResponse('Lote recuperado com sucesso', lote));
+      res.json({
+        success: true,
+        message: 'Lote encontrado',
+        data: lote
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar lote', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar lote',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Cria um novo lote
-   * @param req Requisição Express contendo os dados do lote
-   * @param res Resposta Express
+   * Cria novo lote
    */
-  static create: ControllerFunction = async (req: Request, res: Response) => {
+  static async create(req: Request, res: Response) {
     try {
-      // Tenta converter a data de validade para objeto Date
-      if (req.body.dataValidade && typeof req.body.dataValidade === 'string') {
-        req.body.dataValidade = new Date(req.body.dataValidade);
-        
-        if (isNaN(req.body.dataValidade.getTime())) {
-          return res.status(400).json(errorResponse('Data de validade inválida'));
-        }
-      }
-      
-      const lote = await services.loteService.create(req.body);
-      res.status(201).json(successResponse('Lote criado com sucesso', lote));
+      const lote = await LoteController.loteService.create(req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Lote criado',
+        data: lote
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao criar lote', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao criar lote',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza um lote existente
-   * @param req Requisição Express contendo o ID e dados atualizados do lote
-   * @param res Resposta Express
+   * Atualiza lote
    */
-  static update: ControllerFunction = async (req: Request, res: Response) => {
+  static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      
-      // Tenta converter a data de validade para objeto Date
-      if (req.body.dataValidade && typeof req.body.dataValidade === 'string') {
-        req.body.dataValidade = new Date(req.body.dataValidade);
-        
-        if (isNaN(req.body.dataValidade.getTime())) {
-          return res.status(400).json(errorResponse('Data de validade inválida'));
-        }
-      }
-      
-      const lote = await services.loteService.update(id, req.body);
+      const lote = await LoteController.loteService.update(id, req.body);
       
       if (!lote) {
-        return res.status(404).json(errorResponse('Lote não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Lote não encontrado'
+        });
       }
       
-      res.json(successResponse('Lote atualizado com sucesso', lote));
+      res.json({
+        success: true,
+        message: 'Lote atualizado',
+        data: lote
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar lote', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar lote',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Remove um lote
-   * @param req Requisição Express contendo o ID do lote
-   * @param res Resposta Express
+   * Remove lote
    */
-  static delete: ControllerFunction = async (req: Request, res: Response) => {
+  static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await services.loteService.delete(id);
+      const result = await LoteController.loteService.delete(id);
       
       if (!result) {
-        return res.status(404).json(errorResponse('Lote não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Lote não encontrado'
+        });
       }
       
-      res.json(successResponse('Lote removido com sucesso'));
+      res.json({
+        success: true,
+        message: 'Lote removido'
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao remover lote', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao remover lote',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca lotes por produto
-   * @param req Requisição Express contendo o ID do produto
-   * @param res Resposta Express
+   * Busca por produto (filtro básico)
    */
-  static findByProduto: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByProduto(req: Request, res: Response) {
     try {
       const { produtoId } = req.params;
+      const lotes = await LoteController.loteService.findByProduto(produtoId);
       
-      if (!produtoId) {
-        return res.status(400).json(errorResponse('ID do produto não informado'));
-      }
-      
-      const lotes = await services.loteService.findByProduto(produtoId);
-      res.json(successResponse('Lotes recuperados com sucesso', lotes));
+      res.json({
+        success: true,
+        message: 'Busca por produto realizada',
+        data: lotes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar lotes por produto', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por produto',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca lotes vencidos
-   * @param req Requisição Express contendo a data de referência (opcional)
-   * @param res Resposta Express
+   * Busca lotes vencidos (funcionalidade básica)
    */
-  static findLotesVencidos: ControllerFunction = async (req: Request, res: Response) => {
+  static async findLotesVencidos(req: Request, res: Response) {
     try {
-      let dataReferencia = new Date();
-      
-      if (req.query.dataReferencia && typeof req.query.dataReferencia === 'string') {
-        const dataRef = new Date(req.query.dataReferencia);
-        
-        if (!isNaN(dataRef.getTime())) {
-          dataReferencia = dataRef;
-        }
-      }
-      
-      const lotes = await services.loteService.findLotesVencidos(dataReferencia);
-      res.json(successResponse('Lotes vencidos recuperados com sucesso', lotes));
+      const lotes = await LoteController.loteService.findLotesVencidos();
+      res.json({
+        success: true,
+        message: 'Lotes vencidos encontrados',
+        data: lotes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar lotes vencidos', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar lotes vencidos',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca lotes próximos do vencimento
-   * @param req Requisição Express contendo a quantidade de dias limite e data de referência (opcionais)
-   * @param res Resposta Express
+   * Busca lotes próximos do vencimento (funcionalidade básica)
    */
-  static findLotesProximosVencimento: ControllerFunction = async (req: Request, res: Response) => {
+  static async findLotesProximosVencimento(req: Request, res: Response) {
     try {
-      let diasLimite = 30;
-      let dataReferencia = new Date();
-      
-      if (req.query.diasLimite && typeof req.query.diasLimite === 'string') {
-        const dias = parseInt(req.query.diasLimite, 10);
-        
-        if (!isNaN(dias) && dias > 0) {
-          diasLimite = dias;
-        }
-      }
-      
-      if (req.query.dataReferencia && typeof req.query.dataReferencia === 'string') {
-        const dataRef = new Date(req.query.dataReferencia);
-        
-        if (!isNaN(dataRef.getTime())) {
-          dataReferencia = dataRef;
-        }
-      }
-      
-      const lotes = await services.loteService.findLotesProximosVencimento(diasLimite, dataReferencia);
-      res.json(successResponse('Lotes próximos do vencimento recuperados com sucesso', lotes));
+      const lotes = await LoteController.loteService.findLotesProximosVencimento();
+      res.json({
+        success: true,
+        message: 'Lotes próximos do vencimento encontrados',
+        data: lotes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar lotes próximos do vencimento', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar lotes próximos do vencimento',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Verifica se um lote está vencido
-   * @param req Requisição Express contendo o ID do lote e a data de referência (opcional)
-   * @param res Resposta Express
+   * Verifica vencimento de um lote (funcionalidade básica)
    */
-  static verificarVencimento: ControllerFunction = async (req: Request, res: Response) => {
+  static async verificarVencimento(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      let dataReferencia = new Date();
+      const vencido = await LoteController.loteService.verificarVencimento(id);
       
-      if (req.query.dataReferencia && typeof req.query.dataReferencia === 'string') {
-        const dataRef = new Date(req.query.dataReferencia);
-        
-        if (!isNaN(dataRef.getTime())) {
-          dataReferencia = dataRef;
-        }
-      }
-      
-      const vencido = await services.loteService.verificarVencimento(id, dataReferencia);
-      res.json(successResponse(
-        vencido ? 'Lote está vencido' : 'Lote não está vencido',
-        { vencido }
-      ));
+      res.json({
+        success: true,
+        message: 'Verificação de vencimento realizada',
+        data: { vencido }
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao verificar vencimento do lote', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao verificar vencimento',
+        error: error.message
+      });
     }
-  };
+  }
 } 

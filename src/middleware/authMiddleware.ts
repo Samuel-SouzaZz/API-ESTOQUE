@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/AuthService';
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from '../models/enums/UserRole';
 
 // Estendendo a interface Request para incluir o usuário
 declare global {

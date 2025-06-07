@@ -1,120 +1,163 @@
 import { Request, Response } from 'express';
-import { ControllerFunction, successResponse, errorResponse } from './types';
 import { repositories } from '../repositorio';
 
 /**
- * Classe controladora para operações com pacientes
+ * Controller para pacientes
+ * Implementa CRUD básico conforme conteúdo da disciplina
  */
 export class PacienteController {
   /**
    * Busca todos os pacientes
-   * @param req Requisição Express
-   * @param res Resposta Express
    */
-  static findAll: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findAll(req: Request, res: Response) {
     try {
       const pacientes = await repositories.pacienteRepository.findAll();
-      res.json(successResponse('Pacientes recuperados com sucesso', pacientes));
+      res.json({
+        success: true,
+        message: 'Pacientes encontrados',
+        data: pacientes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar pacientes', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar pacientes',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca um paciente por ID
-   * @param req Requisição Express contendo o ID do paciente
-   * @param res Resposta Express
+   * Busca paciente por ID
    */
-  static findById: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const paciente = await repositories.pacienteRepository.findById(id);
       
       if (!paciente) {
-        res.status(404).json(errorResponse('Paciente não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Paciente não encontrado'
+        });
       }
       
-      res.json(successResponse('Paciente recuperado com sucesso', paciente));
+      res.json({
+        success: true,
+        message: 'Paciente encontrado',
+        data: paciente
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar paciente', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar paciente',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Cria um novo paciente
-   * @param req Requisição Express contendo os dados do paciente
-   * @param res Resposta Express
+   * Cria novo paciente
    */
-  static create: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async create(req: Request, res: Response) {
     try {
       const paciente = await repositories.pacienteRepository.create(req.body);
-      res.status(201).json(successResponse('Paciente criado com sucesso', paciente));
+      res.status(201).json({
+        success: true,
+        message: 'Paciente criado',
+        data: paciente
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao criar paciente', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao criar paciente',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza um paciente existente
-   * @param req Requisição Express contendo o ID e dados atualizados do paciente
-   * @param res Resposta Express
+   * Atualiza paciente
    */
-  static update: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const paciente = await repositories.pacienteRepository.update(id, req.body);
       
       if (!paciente) {
-        res.status(404).json(errorResponse('Paciente não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Paciente não encontrado'
+        });
       }
       
-      res.json(successResponse('Paciente atualizado com sucesso', paciente));
+      res.json({
+        success: true,
+        message: 'Paciente atualizado',
+        data: paciente
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar paciente', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar paciente',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Remove um paciente
-   * @param req Requisição Express contendo o ID do paciente
-   * @param res Resposta Express
+   * Remove paciente
    */
-  static delete: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const result = await repositories.pacienteRepository.delete(id);
       
       if (!result) {
-        res.status(404).json(errorResponse('Paciente não encontrado'));
-        return;
+        return res.status(404).json({
+          success: false,
+          message: 'Paciente não encontrado'
+        });
       }
       
-      res.json(successResponse('Paciente removido com sucesso'));
+      res.json({
+        success: true,
+        message: 'Paciente removido'
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao remover paciente', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao remover paciente',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca pacientes por nome
-   * @param req Requisição Express contendo o nome a ser pesquisado
-   * @param res Resposta Express
+   * Busca por nome (filtro básico)
    */
-  static findByNome: ControllerFunction = async (req: Request, res: Response): Promise<void> => {
+  static async findByNome(req: Request, res: Response) {
     try {
       const { nome } = req.query;
       
-      if (!nome || typeof nome !== 'string') {
-        res.status(400).json(errorResponse('Nome não informado ou inválido'));
-        return;
+      if (!nome) {
+        return res.status(400).json({
+          success: false,
+          message: 'Nome é obrigatório'
+        });
       }
       
-      const pacientes = await repositories.pacienteRepository.findByNome(nome);
-      res.json(successResponse('Pacientes recuperados com sucesso', pacientes));
+      const pacientes = await repositories.pacienteRepository.findByNome(nome as string);
+      res.json({
+        success: true,
+        message: 'Busca por nome realizada',
+        data: pacientes
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar pacientes por nome', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por nome',
+        error: error.message
+      });
     }
-  };
+  }
 } 

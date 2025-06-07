@@ -1,136 +1,187 @@
 import { Request, Response } from 'express';
-import { ControllerFunction, successResponse, errorResponse } from './types';
-import { services } from '../services';
+import { MedicamentoService } from '../services/MedicamentoService';
 
 /**
- * Classe controladora para operações com medicamentos
+ * Controller para operações com medicamentos
+ * Implementa CRUD básico conforme conteúdo da disciplina
  */
 export class MedicamentoController {
+  private static medicamentoService = new MedicamentoService();
+
   /**
    * Busca todos os medicamentos
-   * @param req Requisição Express
-   * @param res Resposta Express
    */
-  static findAll: ControllerFunction = async (req: Request, res: Response) => {
+  static async findAll(req: Request, res: Response) {
     try {
-      const medicamentos = await services.medicamentoService.findAll();
-      res.json(successResponse('Medicamentos recuperados com sucesso', medicamentos));
+      const medicamentos = await MedicamentoController.medicamentoService.findAll();
+      res.json({
+        success: true,
+        message: 'Medicamentos recuperados com sucesso',
+        data: medicamentos
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar medicamentos', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar medicamentos',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca um medicamento por ID
-   * @param req Requisição Express contendo o ID do medicamento
-   * @param res Resposta Express
+   * Busca medicamento por ID
    */
-  static findById: ControllerFunction = async (req: Request, res: Response) => {
+  static async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const medicamento = await services.medicamentoService.findById(id);
+      const medicamento = await MedicamentoController.medicamentoService.findById(id);
       
       if (!medicamento) {
-        return res.status(404).json(errorResponse('Medicamento não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Medicamento não encontrado'
+        });
       }
       
-      res.json(successResponse('Medicamento recuperado com sucesso', medicamento));
+      res.json({
+        success: true,
+        message: 'Medicamento encontrado',
+        data: medicamento
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar medicamento', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao buscar medicamento',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Cria um novo medicamento
-   * @param req Requisição Express contendo os dados do medicamento
-   * @param res Resposta Express
+   * Cria novo medicamento
    */
-  static create: ControllerFunction = async (req: Request, res: Response) => {
+  static async create(req: Request, res: Response) {
     try {
-      const medicamento = await services.medicamentoService.create(req.body);
-      res.status(201).json(successResponse('Medicamento criado com sucesso', medicamento));
+      const medicamento = await MedicamentoController.medicamentoService.create(req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Medicamento criado com sucesso',
+        data: medicamento
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao criar medicamento', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao criar medicamento',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Atualiza um medicamento existente
-   * @param req Requisição Express contendo o ID e dados atualizados do medicamento
-   * @param res Resposta Express
+   * Atualiza medicamento
    */
-  static update: ControllerFunction = async (req: Request, res: Response) => {
+  static async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const medicamento = await services.medicamentoService.update(id, req.body);
+      const medicamento = await MedicamentoController.medicamentoService.update(id, req.body);
       
       if (!medicamento) {
-        return res.status(404).json(errorResponse('Medicamento não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Medicamento não encontrado'
+        });
       }
       
-      res.json(successResponse('Medicamento atualizado com sucesso', medicamento));
+      res.json({
+        success: true,
+        message: 'Medicamento atualizado',
+        data: medicamento
+      });
     } catch (error: any) {
-      res.status(400).json(errorResponse('Erro ao atualizar medicamento', error.message));
+      res.status(400).json({
+        success: false,
+        message: 'Erro ao atualizar medicamento',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Remove um medicamento
-   * @param req Requisição Express contendo o ID do medicamento
-   * @param res Resposta Express
+   * Remove medicamento
    */
-  static delete: ControllerFunction = async (req: Request, res: Response) => {
+  static async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await services.medicamentoService.delete(id);
+      const result = await MedicamentoController.medicamentoService.delete(id);
       
       if (!result) {
-        return res.status(404).json(errorResponse('Medicamento não encontrado'));
+        return res.status(404).json({
+          success: false,
+          message: 'Medicamento não encontrado'
+        });
       }
       
-      res.json(successResponse('Medicamento removido com sucesso'));
+      res.json({
+        success: true,
+        message: 'Medicamento removido'
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao remover medicamento', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro ao remover medicamento',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca medicamentos por nome
-   * @param req Requisição Express contendo o nome a ser pesquisado
-   * @param res Resposta Express
+   * Busca por nome (filtro básico conforme matéria)
    */
-  static findByNome: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByNome(req: Request, res: Response) {
     try {
       const { nome } = req.query;
       
-      if (!nome || typeof nome !== 'string') {
-        return res.status(400).json(errorResponse('Nome não informado ou inválido'));
+      if (!nome) {
+        return res.status(400).json({
+          success: false,
+          message: 'Nome é obrigatório'
+        });
       }
       
-      const medicamentos = await services.medicamentoService.findByNome(nome);
-      res.json(successResponse('Medicamentos recuperados com sucesso', medicamentos));
+      const medicamentos = await MedicamentoController.medicamentoService.findByNome(nome as string);
+      res.json({
+        success: true,
+        message: 'Busca por nome realizada',
+        data: medicamentos
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar medicamentos por nome', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por nome',
+        error: error.message
+      });
     }
-  };
+  }
 
   /**
-   * Busca medicamentos por fornecedor
-   * @param req Requisição Express contendo o ID do fornecedor
-   * @param res Resposta Express
+   * Busca por fornecedor (filtro básico conforme matéria)
    */
-  static findByFornecedor: ControllerFunction = async (req: Request, res: Response) => {
+  static async findByFornecedor(req: Request, res: Response) {
     try {
       const { fornecedorId } = req.params;
+      const medicamentos = await MedicamentoController.medicamentoService.findByFornecedor(fornecedorId);
       
-      if (!fornecedorId) {
-        return res.status(400).json(errorResponse('ID do fornecedor não informado'));
-      }
-      
-      const medicamentos = await services.medicamentoService.findByFornecedor(fornecedorId);
-      res.json(successResponse('Medicamentos recuperados com sucesso', medicamentos));
+      res.json({
+        success: true,
+        message: 'Busca por fornecedor realizada',
+        data: medicamentos
+      });
     } catch (error: any) {
-      res.status(500).json(errorResponse('Erro ao buscar medicamentos por fornecedor', error.message));
+      res.status(500).json({
+        success: false,
+        message: 'Erro na busca por fornecedor',
+        error: error.message
+      });
     }
-  };
+  }
 } 

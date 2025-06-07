@@ -1,4 +1,4 @@
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from './enums/UserRole';
 
 // Interface para o documento de Usuario
 export interface IUsuario {

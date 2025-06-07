@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { AuthMiddleware } from '../middleware/authMiddleware';
-import { UserRole } from '../enums/UserRole';
+import { UserRole } from '../models/enums/UserRole';
 
 export class ProtectedExamplesRoutes {
   private router: Router;
