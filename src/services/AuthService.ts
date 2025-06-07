@@ -77,7 +77,7 @@ export class AuthService {
     // Payload do token conforme a matéria
     const payload = {
       id: usuario.id,
-      name: usuario.nome,
+      nome: usuario.nome,
       email: usuario.email,
       role: usuario.role
     };
