@@ -1,19 +1,27 @@
-import { v4 as uuidv4 } from 'uuid';
 import { IBaseRepository } from './BaseRepository';
 import Medicamento, { IMedicamento } from '../models/Medicamento';
+import { db } from '../config/database';
 
 /**
  * Repositório para gerenciamento de Medicamentos
+ * Conectado ao banco SQLite via Knex.js
  */
 export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
-  private medicamentos: IMedicamento[] = [];
 
   /**
    * Busca todos os medicamentos cadastrados
    * @returns Promise com lista de medicamentos
    */
   async findAll(): Promise<IMedicamento[]> {
-    return this.medicamentos;
+    const medicamentos = await db('medicamentos').select('*');
+    return medicamentos.map(m => new Medicamento({
+      id: m.id.toString(),
+      nome: m.nome,
+      fornecedorId: m.fornecedor_id?.toString() || '',
+      tarja: 'SEM_TARJA',
+      createdAt: m.created_at,
+      updatedAt: m.updated_at
+    }));
   }
 
   /**
@@ -22,8 +30,20 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com o medicamento encontrado ou null
    */
   async findById(id: string): Promise<IMedicamento | null> {
-    const medicamento = this.medicamentos.find(med => med.id === id);
-    return medicamento || null;
+    const medicamento = await db('medicamentos').where('id', id).first();
+    
+    if (!medicamento) {
+      return null;
+    }
+    
+    return new Medicamento({
+      id: medicamento.id.toString(),
+      nome: medicamento.nome,
+      fornecedorId: medicamento.fornecedor_id?.toString() || '',
+      tarja: 'SEM_TARJA',
+      createdAt: medicamento.created_at,
+      updatedAt: medicamento.updated_at
+    });
   }
 
   /**
@@ -32,15 +52,16 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com o medicamento criado
    */
   async create(data: Partial<IMedicamento>): Promise<IMedicamento> {
-    const novoMedicamento = new Medicamento({
-      ...data,
-      id: uuidv4(),
-      createdAt: new Date(),
-      updatedAt: new Date()
+    const [id] = await db('medicamentos').insert({
+      nome: data.nome,
+      descricao: 'Medicamento',
+      fornecedor_id: data.fornecedorId ? parseInt(data.fornecedorId) : undefined,
+      created_at: new Date(),
+      updated_at: new Date()
     });
     
-    this.medicamentos.push(novoMedicamento);
-    return novoMedicamento;
+    const medicamentoCriado = await this.findById(id.toString());
+    return medicamentoCriado!;
   }
 
   /**
@@ -50,20 +71,19 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com o medicamento atualizado ou null
    */
   async update(id: string, data: Partial<IMedicamento>): Promise<IMedicamento | null> {
-    const index = this.medicamentos.findIndex(med => med.id === id);
+    const updated = await db('medicamentos')
+      .where('id', id)
+      .update({
+        nome: data.nome,
+        fornecedor_id: data.fornecedorId ? parseInt(data.fornecedorId) : undefined,
+        updated_at: new Date()
+      });
     
-    if (index === -1) {
+    if (updated === 0) {
       return null;
     }
     
-    const medicamentoAtualizado = new Medicamento({
-      ...this.medicamentos[index],
-      ...data,
-      updatedAt: new Date()
-    });
-    
-    this.medicamentos[index] = medicamentoAtualizado;
-    return medicamentoAtualizado;
+    return this.findById(id);
   }
 
   /**
@@ -72,14 +92,8 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    const index = this.medicamentos.findIndex(med => med.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-    
-    this.medicamentos.splice(index, 1);
-    return true;
+    const deleted = await db('medicamentos').where('id', id).del();
+    return deleted > 0;
   }
 
   /**
@@ -88,9 +102,18 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com lista de medicamentos que correspondem ao critério
    */
   async findByNome(nome: string): Promise<IMedicamento[]> {
-    return this.medicamentos.filter(med => 
-      med.nome.toLowerCase().includes(nome.toLowerCase())
-    );
+    const medicamentos = await db('medicamentos')
+      .where('nome', 'like', `%${nome}%`)
+      .select('*');
+    
+    return medicamentos.map(m => new Medicamento({
+      id: m.id.toString(),
+      nome: m.nome,
+      fornecedorId: m.fornecedor_id?.toString() || '',
+      tarja: 'SEM_TARJA',
+      createdAt: m.created_at,
+      updatedAt: m.updated_at
+    }));
   }
 
   /**
@@ -99,6 +122,17 @@ export class MedicamentoRepository implements IBaseRepository<IMedicamento> {
    * @returns Promise com lista de medicamentos do fornecedor
    */
   async findByFornecedor(fornecedorId: string): Promise<IMedicamento[]> {
-    return this.medicamentos.filter(med => med.fornecedorId === fornecedorId);
+    const medicamentos = await db('medicamentos')
+      .where('fornecedor_id', fornecedorId)
+      .select('*');
+    
+    return medicamentos.map(m => new Medicamento({
+      id: m.id.toString(),
+      nome: m.nome,
+      fornecedorId: m.fornecedor_id?.toString() || '',
+      tarja: 'SEM_TARJA',
+      createdAt: m.created_at,
+      updatedAt: m.updated_at
+    }));
   }
 } 

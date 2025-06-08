@@ -1,20 +1,29 @@
-import { v4 as uuidv4 } from 'uuid';
 import { IBaseRepository } from './BaseRepository';
 import { IUsuario } from '../models/Usuario';
 import { UserRole } from '../models/enums/UserRole';
+import { db } from '../config/database';
 
 /**
  * Repositório para gerenciamento de Usuários
+ * Conectado ao banco SQLite via Knex.js
  */
 export class UsuarioRepository implements IBaseRepository<IUsuario> {
-  private usuarios: IUsuario[] = [];
 
   /**
    * Busca todos os usuários
    * @returns Promise com lista de usuários
    */
   async findAll(): Promise<IUsuario[]> {
-    return this.usuarios;
+    const usuarios = await db('usuarios').select('*');
+    return usuarios.map(u => ({
+      id: u.id.toString(),
+      nome: u.nome,
+      email: u.email,
+      senha: u.senha,
+      role: u.role as UserRole,
+      createdAt: u.created_at,
+      updatedAt: u.updated_at
+    }));
   }
 
   /**
@@ -23,8 +32,21 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
    * @returns Promise com o usuário encontrado ou null
    */
   async findById(id: string): Promise<IUsuario | null> {
-    const usuario = this.usuarios.find(u => u.id === id);
-    return usuario || null;
+    const usuario = await db('usuarios').where('id', id).first();
+    
+    if (!usuario) {
+      return null;
+    }
+    
+    return {
+      id: usuario.id.toString(),
+      nome: usuario.nome,
+      email: usuario.email,
+      senha: usuario.senha,
+      role: usuario.role as UserRole,
+      createdAt: usuario.created_at,
+      updatedAt: usuario.updated_at
+    };
   }
 
   /**
@@ -33,8 +55,21 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
    * @returns Promise com o usuário encontrado ou null
    */
   async findByEmail(email: string): Promise<IUsuario | null> {
-    const usuario = this.usuarios.find(u => u.email === email);
-    return usuario || null;
+    const usuario = await db('usuarios').where('email', email).first();
+    
+    if (!usuario) {
+      return null;
+    }
+    
+    return {
+      id: usuario.id.toString(),
+      nome: usuario.nome,
+      email: usuario.email,
+      senha: usuario.senha,
+      role: usuario.role as UserRole,
+      createdAt: usuario.created_at,
+      updatedAt: usuario.updated_at
+    };
   }
 
   /**
@@ -43,18 +78,17 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
    * @returns Promise com o usuário criado
    */
   async create(userData: Partial<IUsuario>): Promise<IUsuario> {
-    const novoUsuario: IUsuario = {
-      id: uuidv4(),
-      nome: userData.nome || '',
-      email: userData.email || '',
-      senha: userData.senha || '',
+    const [id] = await db('usuarios').insert({
+      nome: userData.nome,
+      email: userData.email,
+      senha: userData.senha,
       role: userData.role || UserRole.PACIENTE,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+      created_at: new Date(),
+      updated_at: new Date()
+    });
     
-    this.usuarios.push(novoUsuario);
-    return novoUsuario;
+    const usuarioCriado = await this.findById(id.toString());
+    return usuarioCriado!;
   }
 
   /**
@@ -64,20 +98,21 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
    * @returns Promise com o usuário atualizado ou null
    */
   async update(id: string, userData: Partial<IUsuario>): Promise<IUsuario | null> {
-    const index = this.usuarios.findIndex(u => u.id === id);
+    const updated = await db('usuarios')
+      .where('id', id)
+      .update({
+        nome: userData.nome,
+        email: userData.email,
+        senha: userData.senha,
+        role: userData.role,
+        updated_at: new Date()
+      });
     
-    if (index === -1) {
+    if (updated === 0) {
       return null;
     }
     
-    const usuarioAtualizado: IUsuario = {
-      ...this.usuarios[index],
-      ...userData,
-      updatedAt: new Date()
-    };
-    
-    this.usuarios[index] = usuarioAtualizado;
-    return usuarioAtualizado;
+    return this.findById(id);
   }
 
   /**
@@ -86,13 +121,7 @@ export class UsuarioRepository implements IBaseRepository<IUsuario> {
    * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    const index = this.usuarios.findIndex(u => u.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-    
-    this.usuarios.splice(index, 1);
-    return true;
+    const deleted = await db('usuarios').where('id', id).del();
+    return deleted > 0;
   }
 } 
