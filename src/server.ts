@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import routes from './routes';
 import { swaggerUi, specs } from './config/swagger';
+import connectDB from './config/database';
 
 // Carrega as variáveis de ambiente
 dotenv.config();
@@ -34,11 +35,26 @@ app.use('/api', routes);
 // Porta da aplicação
 const PORT = process.env.PORT || 5000;
 
-// Inicia o servidor
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`API de Controle de Estoque de Medicamentos iniciada em http://localhost:${PORT}`);
-  console.log(`📚 Documentação Swagger disponível em: http://localhost:${PORT}/api-docs`);
-});
+// Função para iniciar o servidor
+const startServer = async () => {
+  try {
+    // Conecta ao banco de dados
+    await connectDB();
+    
+    // Inicia o servidor
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`);
+      console.log(`API de Controle de Estoque de Medicamentos iniciada em http://localhost:${PORT}`);
+      console.log(`📚 Documentação Swagger disponível em: http://localhost:${PORT}/api-docs`);
+      console.log(`🗄️  Banco de dados SQLite conectado com sucesso!`);
+    });
+  } catch (error) {
+    console.error('Erro ao iniciar servidor:', error);
+    process.exit(1);
+  }
+};
+
+// Inicia o servidor com conexão ao banco
+startServer();
 
 export default app; 

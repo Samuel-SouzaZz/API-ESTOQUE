@@ -1,20 +1,28 @@
-import { v4 as uuidv4 } from 'uuid';
 import { IBaseRepository } from './BaseRepository';
 import Fornecedor, { IFornecedor } from '../models/Fornecedor';
 import { StatusFornecedor } from '../models/enums/statusFornecedor';
+import { db } from '../config/database';
 
 /**
  * Repositório para gerenciamento de Fornecedores
+ * Conectado ao banco SQLite via Knex.js
  */
 export class FornecedorRepository implements IBaseRepository<IFornecedor> {
-  private fornecedores: IFornecedor[] = [];
 
   /**
    * Busca todos os fornecedores cadastrados
    * @returns Promise com lista de fornecedores
    */
   async findAll(): Promise<IFornecedor[]> {
-    return this.fornecedores;
+    const fornecedores = await db('fornecedores').select('*');
+    return fornecedores.map(f => new Fornecedor({
+      id: f.id.toString(),
+      nome: f.nome,
+      status: f.status,
+      telefone: f.telefone,
+      createdAt: f.created_at,
+      updatedAt: f.updated_at
+    }));
   }
 
   /**
@@ -23,8 +31,20 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com o fornecedor encontrado ou null
    */
   async findById(id: string): Promise<IFornecedor | null> {
-    const fornecedor = this.fornecedores.find(f => f.id === id);
-    return fornecedor || null;
+    const fornecedor = await db('fornecedores').where('id', id).first();
+    
+    if (!fornecedor) {
+      return null;
+    }
+    
+    return new Fornecedor({
+      id: fornecedor.id.toString(),
+      nome: fornecedor.nome,
+      status: fornecedor.status,
+      telefone: fornecedor.telefone,
+      createdAt: fornecedor.created_at,
+      updatedAt: fornecedor.updated_at
+    });
   }
 
   /**
@@ -33,16 +53,16 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com o fornecedor criado
    */
   async create(data: Partial<IFornecedor>): Promise<IFornecedor> {
-    const novoFornecedor = new Fornecedor({
-      ...data,
-      id: uuidv4(),
+    const [id] = await db('fornecedores').insert({
+      nome: data.nome,
       status: data.status || StatusFornecedor.Disponivel,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      telefone: data.telefone,
+      created_at: new Date(),
+      updated_at: new Date()
     });
     
-    this.fornecedores.push(novoFornecedor);
-    return novoFornecedor;
+    const fornecedorCriado = await this.findById(id.toString());
+    return fornecedorCriado!;
   }
 
   /**
@@ -52,20 +72,20 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com o fornecedor atualizado ou null
    */
   async update(id: string, data: Partial<IFornecedor>): Promise<IFornecedor | null> {
-    const index = this.fornecedores.findIndex(f => f.id === id);
+    const updated = await db('fornecedores')
+      .where('id', id)
+      .update({
+        nome: data.nome,
+        status: data.status,
+        telefone: data.telefone,
+        updated_at: new Date()
+      });
     
-    if (index === -1) {
+    if (updated === 0) {
       return null;
     }
     
-    const fornecedorAtualizado = new Fornecedor({
-      ...this.fornecedores[index],
-      ...data,
-      updatedAt: new Date()
-    });
-    
-    this.fornecedores[index] = fornecedorAtualizado;
-    return fornecedorAtualizado;
+    return this.findById(id);
   }
 
   /**
@@ -74,14 +94,8 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    const index = this.fornecedores.findIndex(f => f.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-    
-    this.fornecedores.splice(index, 1);
-    return true;
+    const deleted = await db('fornecedores').where('id', id).del();
+    return deleted > 0;
   }
 
   /**
@@ -90,9 +104,18 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com lista de fornecedores que correspondem ao critério
    */
   async findByNome(nome: string): Promise<IFornecedor[]> {
-    return this.fornecedores.filter(f => 
-      f.nome.toLowerCase().includes(nome.toLowerCase())
-    );
+    const fornecedores = await db('fornecedores')
+      .where('nome', 'like', `%${nome}%`)
+      .select('*');
+    
+    return fornecedores.map(f => new Fornecedor({
+      id: f.id.toString(),
+      nome: f.nome,
+      status: f.status,
+      telefone: f.telefone,
+      createdAt: f.created_at,
+      updatedAt: f.updated_at
+    }));
   }
 
   /**
@@ -101,7 +124,18 @@ export class FornecedorRepository implements IBaseRepository<IFornecedor> {
    * @returns Promise com lista de fornecedores com o status especificado
    */
   async findByStatus(status: string): Promise<IFornecedor[]> {
-    return this.fornecedores.filter(f => f.status === status);
+    const fornecedores = await db('fornecedores')
+      .where('status', status)
+      .select('*');
+    
+    return fornecedores.map(f => new Fornecedor({
+      id: f.id.toString(),
+      nome: f.nome,
+      status: f.status,
+      telefone: f.telefone,
+      createdAt: f.created_at,
+      updatedAt: f.updated_at
+    }));
   }
 
   /**
