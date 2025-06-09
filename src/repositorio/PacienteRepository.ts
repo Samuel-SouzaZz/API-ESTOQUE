@@ -1,21 +1,25 @@
-import { v4 as uuidv4 } from 'uuid';
 import { IBaseRepository } from './BaseRepository';
 import Paciente, { IPaciente } from '../models/Paciente';
+import { db } from '../config/database';
 
 /**
  * Repositório para gerenciamento de Pacientes
- * Implementa operações CRUD básicas e métodos específicos para a entidade Paciente
+ * Conectado ao banco SQLite via Knex.js
  */
 export class PacienteRepository implements IBaseRepository<IPaciente> {
-  // Simulando um banco de dados em memória para testes
-  private pacientes: IPaciente[] = [];
 
   /**
    * Busca todos os pacientes cadastrados
    * @returns Promise com lista de pacientes
    */
   async findAll(): Promise<IPaciente[]> {
-    return this.pacientes;
+    const pacientes = await db('pacientes').select('*');
+    return pacientes.map(p => new Paciente({
+      id: p.id.toString(),
+      nome: p.nome,
+      createdAt: p.created_at,
+      updatedAt: p.updated_at
+    }));
   }
 
   /**
@@ -24,8 +28,18 @@ export class PacienteRepository implements IBaseRepository<IPaciente> {
    * @returns Promise com o paciente encontrado ou null
    */
   async findById(id: string): Promise<IPaciente | null> {
-    const paciente = this.pacientes.find(p => p.id === id);
-    return paciente || null;
+    const paciente = await db('pacientes').where('id', id).first();
+    
+    if (!paciente) {
+      return null;
+    }
+    
+    return new Paciente({
+      id: paciente.id.toString(),
+      nome: paciente.nome,
+      createdAt: paciente.created_at,
+      updatedAt: paciente.updated_at
+    });
   }
 
   /**
@@ -34,15 +48,16 @@ export class PacienteRepository implements IBaseRepository<IPaciente> {
    * @returns Promise com o paciente criado
    */
   async create(data: Partial<IPaciente>): Promise<IPaciente> {
-    const novoPaciente = new Paciente({
-      ...data,
-      id: uuidv4(),
-      createdAt: new Date(),
-      updatedAt: new Date()
+    const [id] = await db('pacientes').insert({
+      nome: data.nome,
+      cpf: '000.000.000-00', // valor padrão
+      data_nascimento: new Date('1990-01-01'), // valor padrão
+      created_at: new Date(),
+      updated_at: new Date()
     });
     
-    this.pacientes.push(novoPaciente);
-    return novoPaciente;
+    const pacienteCriado = await this.findById(id.toString());
+    return pacienteCriado!;
   }
 
   /**
@@ -52,20 +67,18 @@ export class PacienteRepository implements IBaseRepository<IPaciente> {
    * @returns Promise com o paciente atualizado ou null
    */
   async update(id: string, data: Partial<IPaciente>): Promise<IPaciente | null> {
-    const index = this.pacientes.findIndex(p => p.id === id);
+    const updated = await db('pacientes')
+      .where('id', id)
+      .update({
+        nome: data.nome,
+        updated_at: new Date()
+      });
     
-    if (index === -1) {
+    if (updated === 0) {
       return null;
     }
     
-    const pacienteAtualizado = new Paciente({
-      ...this.pacientes[index],
-      ...data,
-      updatedAt: new Date()
-    });
-    
-    this.pacientes[index] = pacienteAtualizado;
-    return pacienteAtualizado;
+    return this.findById(id);
   }
 
   /**
@@ -74,14 +87,8 @@ export class PacienteRepository implements IBaseRepository<IPaciente> {
    * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    const index = this.pacientes.findIndex(p => p.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-    
-    this.pacientes.splice(index, 1);
-    return true;
+    const deleted = await db('pacientes').where('id', id).del();
+    return deleted > 0;
   }
 
   /**
@@ -90,8 +97,15 @@ export class PacienteRepository implements IBaseRepository<IPaciente> {
    * @returns Promise com lista de pacientes que correspondem ao critério
    */
   async findByNome(nome: string): Promise<IPaciente[]> {
-    return this.pacientes.filter(p => 
-      p.nome.toLowerCase().includes(nome.toLowerCase())
-    );
+    const pacientes = await db('pacientes')
+      .where('nome', 'like', `%${nome}%`)
+      .select('*');
+    
+    return pacientes.map(p => new Paciente({
+      id: p.id.toString(),
+      nome: p.nome,
+      createdAt: p.created_at,
+      updatedAt: p.updated_at
+    }));
   }
 } 

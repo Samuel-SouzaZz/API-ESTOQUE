@@ -3,7 +3,11 @@ import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Lotes
+<<<<<<< HEAD
  * Implementa a lógica de negócios básica conforme conteúdo da disciplina
+=======
+ * Implementa a lógica de negócios
+>>>>>>> 0a1e485a98b23f75eff342694de62ccfe0f8884d
  */
 export class LoteService {
   /**
@@ -24,7 +28,11 @@ export class LoteService {
    * Cria um novo lote
    */
   async create(data: Partial<ILote>): Promise<ILote> {
+<<<<<<< HEAD
     // Validação básica conforme matéria
+=======
+    // Validações obrigatórias
+>>>>>>> 0a1e485a98b23f75eff342694de62ccfe0f8884d
     if (!data.produtoId) {
       throw new Error('Produto é obrigatório');
     }
@@ -51,28 +59,28 @@ export class LoteService {
   }
 
   /**
-   * Busca lotes por produto (filtro básico conforme matéria)
+   * Busca lotes por produto
    */
   async findByProduto(produtoId: string): Promise<ILote[]> {
     return repositories.loteRepository.findByProduto(produtoId);
   }
 
   /**
-   * Busca lotes vencidos (funcionalidade básica conforme matéria)
+   * Busca lotes vencidos
    */
   async findLotesVencidos(): Promise<ILote[]> {
     return repositories.loteRepository.findLotesVencidos();
   }
 
   /**
-   * Busca lotes próximos do vencimento (funcionalidade básica conforme matéria)
+   * Busca lotes próximos do vencimento
    */
   async findLotesProximosVencimento(): Promise<ILote[]> {
     return repositories.loteRepository.findLotesProximosVencimento();
   }
 
   /**
-   * Verifica se um lote está vencido (funcionalidade básica conforme matéria)
+   * Verifica se um lote está vencido
    */
   async verificarVencimento(id: string): Promise<boolean> {
     const lote = await this.findById(id);

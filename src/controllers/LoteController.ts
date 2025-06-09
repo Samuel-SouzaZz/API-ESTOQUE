@@ -3,7 +3,7 @@ import { LoteService } from '../services/LoteService';
 
 /**
  * Controller para lotes de medicamentos
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa operações de lotes
  */
 export class LoteController {
   private static loteService = new LoteService();
@@ -135,16 +135,25 @@ export class LoteController {
   }
 
   /**
-   * Busca por produto (filtro básico)
+   * Busca por produto
    */
   static async findByProduto(req: Request, res: Response) {
     try {
       const { produtoId } = req.params;
       const lotes = await LoteController.loteService.findByProduto(produtoId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!lotes || lotes.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum lote encontrado para o produto '${produtoId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por produto realizada',
+        message: `${lotes.length} lote(s) encontrado(s) para o produto`,
         data: lotes
       });
     } catch (error: any) {
@@ -157,7 +166,7 @@ export class LoteController {
   }
 
   /**
-   * Busca lotes vencidos (funcionalidade básica)
+   * Busca lotes vencidos
    */
   static async findLotesVencidos(req: Request, res: Response) {
     try {
@@ -177,7 +186,7 @@ export class LoteController {
   }
 
   /**
-   * Busca lotes próximos do vencimento (funcionalidade básica)
+   * Busca lotes próximos do vencimento
    */
   static async findLotesProximosVencimento(req: Request, res: Response) {
     try {
@@ -197,7 +206,7 @@ export class LoteController {
   }
 
   /**
-   * Verifica vencimento de um lote (funcionalidade básica)
+   * Verifica vencimento de um lote
    */
   static async verificarVencimento(req: Request, res: Response) {
     try {

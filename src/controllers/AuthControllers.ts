@@ -4,7 +4,7 @@ import { UserRole } from '../models/enums/UserRole';
 
 /**
  * Controller de autenticação
- * Implementa JWT conforme conteúdo da disciplina
+ * Implementa JWT e autenticação
  */
 export class AuthController {
   private authService: AuthService;
@@ -20,7 +20,7 @@ export class AuthController {
     try {
       const { nome, email, senha, role } = req.body;
 
-      // Validações básicas conforme matéria
+      // Validações obrigatórias
       if (!nome || !email || !senha) {
         res.status(400).json({
           success: false,
@@ -32,7 +32,7 @@ export class AuthController {
       const userRole = role || UserRole.PACIENTE;
       const novoUsuario = await this.authService.register(nome, email, senha, userRole);
 
-      // Remove a senha do retorno (DTO conforme matéria)
+      // Remove a senha do retorno (segurança)
       const { senha: _, ...usuarioSemSenha } = novoUsuario;
 
       res.status(201).json({
@@ -65,7 +65,7 @@ export class AuthController {
     try {
       const { email, senha } = req.body;
 
-      // Validações básicas conforme matéria
+      // Validações obrigatórias
       if (!email || !senha) {
         res.status(400).json({
           success: false,
@@ -74,7 +74,7 @@ export class AuthController {
         return;
       }
 
-      // Faz o login e gera JWT conforme matéria
+      // Faz o login e gera JWT
       const resultado = await this.authService.login(email, senha);
 
       res.status(200).json({
@@ -101,7 +101,7 @@ export class AuthController {
   };
 
   /**
-   * Verifica token JWT (conforme matéria)
+   * Verifica token JWT
    */
   verifyToken = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -125,7 +125,7 @@ export class AuthController {
         return;
       }
 
-      // Verifica o token conforme matéria
+      // Verifica o token
       const decoded = this.authService.verifyToken(token);
 
       res.status(200).json({
@@ -133,7 +133,7 @@ export class AuthController {
         message: 'Token válido',
         data: {
           id: decoded.id,
-          name: decoded.name,
+          nome: decoded.nome,
           email: decoded.email,
           role: decoded.role
         }
@@ -149,7 +149,7 @@ export class AuthController {
   };
 
   /**
-   * Dados do usuário logado (rota protegida conforme matéria)
+   * Dados do usuário logado (rota protegida)
    */
   me = async (req: Request, res: Response): Promise<void> => {
     try {

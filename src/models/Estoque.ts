@@ -1,7 +1,7 @@
 // Interface para o documento de Estoque
 export interface IEstoque {
   id: string;
-  local: string; //(trocar Farmacia)
+  local: string;
   loteId: string;
   quantidade: number;
   createdAt: Date;

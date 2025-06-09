@@ -4,7 +4,7 @@ import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Controle de Estoque
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa operações de controle de estoque
  */
 export class ControleEstoqueService {
   /**
@@ -25,7 +25,7 @@ export class ControleEstoqueService {
    * Cria uma nova solicitação de medicamento
    */
   async create(data: Partial<IControleEstoque>): Promise<IControleEstoque> {
-    // Validação básica conforme matéria
+    // Validações obrigatórias
     if (!data.medicoId) {
       throw new Error('Médico é obrigatório');
     }
@@ -64,38 +64,38 @@ export class ControleEstoqueService {
   }
 
   /**
-   * Atualiza o status de uma solicitação (funcionalidade básica)
+   * Atualiza o status de uma solicitação
    */
   async atualizarStatus(id: string, status: string): Promise<IControleEstoque | null> {
     return repositories.controleEstoqueRepository.atualizarStatus(id, status);
   }
 
   /**
-   * Busca solicitações por médico (filtro básico conforme matéria)
+   * Busca solicitações por médico
    */
   async findByMedico(medicoId: string): Promise<IControleEstoque[]> {
     return repositories.controleEstoqueRepository.findByMedico(medicoId);
   }
 
   /**
-   * Busca solicitações por paciente (filtro básico conforme matéria)
+   * Busca solicitações por paciente
    */
   async findByPaciente(pacienteId: string): Promise<IControleEstoque[]> {
     return repositories.controleEstoqueRepository.findByPaciente(pacienteId);
   }
 
   /**
-   * Busca solicitações por status (filtro básico conforme matéria)
+   * Busca solicitações por status
    */
   async findByStatus(status: string): Promise<IControleEstoque[]> {
     return repositories.controleEstoqueRepository.findByStatus(status);
   }
 
   /**
-   * Gera relatório simples (funcionalidade básica conforme matéria)
+   * Gera relatório de controle de estoque
    */
   async relatorio(): Promise<any> {
-    // Relatório básico - apenas conta total de registros por status
+    // Relatório - conta total de registros por status
     const todos = await this.findAll();
     
     const relatorio = {

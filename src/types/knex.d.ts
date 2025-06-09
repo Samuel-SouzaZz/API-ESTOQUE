@@ -95,5 +95,15 @@ declare module 'knex/types/tables' {
       created_at: Date;
       updated_at: Date;
     };
+    
+    usuarios: {
+      id: number;
+      nome: string;
+      email: string;
+      senha: string;
+      role: string;
+      created_at: Date;
+      updated_at: Date;
+    };
   }
 } 

@@ -1,42 +1,44 @@
 import { Router } from 'express';
 import { LoteController } from '../controllers';
+import { AuthMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
+const authMiddleware = new AuthMiddleware();
 
 /**
  * @route   GET /lotes
  * @desc    Busca todos os lotes
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/', LoteController.findAll);
+router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, LoteController.findAll);
 
 /**
  * @route   GET /lotes/:id
  * @desc    Busca um lote pelo ID
- * @access  Public
+ * @access  Private - Profissionais de saúde
  */
-router.get('/:id', LoteController.findById);
+router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly, LoteController.findById);
 
 /**
  * @route   POST /lotes
  * @desc    Cria um novo lote
- * @access  Public
+ * @access  Private - Farmacêuticos e Admins
  */
-router.post('/', LoteController.create);
+router.post('/', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, LoteController.create);
 
 /**
  * @route   PUT /lotes/:id
  * @desc    Atualiza um lote existente
- * @access  Public
+ * @access  Private - Farmacêuticos e Admins
  */
-router.put('/:id', LoteController.update);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, LoteController.update);
 
 /**
  * @route   DELETE /lotes/:id
  * @desc    Remove um lote
- * @access  Public
+ * @access  Private - Apenas Admins
  */
-router.delete('/:id', LoteController.delete);
+router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, LoteController.delete);
 
 /**
  * @route   GET /lotes/produto/:produtoId

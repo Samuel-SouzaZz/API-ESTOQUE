@@ -8,7 +8,7 @@ declare global {
     interface Request {
       user?: {
         id: string;
-        name: string;
+        nome: string;
         email: string;
         role: UserRole;
       };
@@ -56,7 +56,7 @@ export class AuthMiddleware {
       // Adiciona os dados do usuário na requisição
       req.user = {
         id: decoded.id,
-        name: decoded.name,
+        nome: decoded.nome,
         email: decoded.email,
         role: decoded.role
       };

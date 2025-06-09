@@ -3,7 +3,7 @@ import { ControleEstoqueService } from '../services/ControleEstoqueService';
 
 /**
  * Controller para controle de estoque
- * Implementa operações básicas conforme conteúdo da disciplina
+ * Implementa operações de estoque
  */
 export class ControleEstoqueController {
   private static controleEstoqueService = new ControleEstoqueService();
@@ -135,7 +135,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Atualiza status (funcionalidade básica)
+   * Atualiza status
    */
   static async atualizarStatus(req: Request, res: Response) {
     try {
@@ -173,16 +173,25 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por médico (filtro básico)
+   * Busca por médico
    */
   static async findByMedico(req: Request, res: Response) {
     try {
       const { medicoId } = req.params;
       const controles = await ControleEstoqueController.controleEstoqueService.findByMedico(medicoId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado para o médico '${medicoId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por médico realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) para o médico`,
         data: controles
       });
     } catch (error: any) {
@@ -195,16 +204,25 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por paciente (filtro básico)
+   * Busca por paciente
    */
   static async findByPaciente(req: Request, res: Response) {
     try {
       const { pacienteId } = req.params;
       const controles = await ControleEstoqueController.controleEstoqueService.findByPaciente(pacienteId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado para o paciente '${pacienteId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por paciente realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) para o paciente`,
         data: controles
       });
     } catch (error: any) {
@@ -217,7 +235,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Busca por status (filtro básico)
+   * Busca por status
    */
   static async findByStatus(req: Request, res: Response) {
     try {
@@ -231,9 +249,19 @@ export class ControleEstoqueController {
       }
       
       const controles = await ControleEstoqueController.controleEstoqueService.findByStatus(status as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado com status '${status}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por status realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) com status '${status}'`,
         data: controles
       });
     } catch (error: any) {
@@ -246,7 +274,7 @@ export class ControleEstoqueController {
   }
 
   /**
-   * Relatório simples (funcionalidade básica)
+   * Relatório de estoque
    */
   static async relatorio(req: Request, res: Response) {
     try {

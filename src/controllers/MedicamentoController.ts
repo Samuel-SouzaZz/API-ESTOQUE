@@ -3,7 +3,7 @@ import { MedicamentoService } from '../services/MedicamentoService';
 
 /**
  * Controller para operações com medicamentos
- * Implementa CRUD básico conforme conteúdo da disciplina
+ * Implementa CRUD completo
  */
 export class MedicamentoController {
   private static medicamentoService = new MedicamentoService();
@@ -135,7 +135,7 @@ export class MedicamentoController {
   }
 
   /**
-   * Busca por nome (filtro básico conforme matéria)
+   * Busca por nome
    */
   static async findByNome(req: Request, res: Response) {
     try {
@@ -149,9 +149,19 @@ export class MedicamentoController {
       }
       
       const medicamentos = await MedicamentoController.medicamentoService.findByNome(nome as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!medicamentos || medicamentos.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum medicamento encontrado com o nome '${nome}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por nome realizada',
+        message: `${medicamentos.length} medicamento(s) encontrado(s)`,
         data: medicamentos
       });
     } catch (error: any) {
@@ -164,16 +174,25 @@ export class MedicamentoController {
   }
 
   /**
-   * Busca por fornecedor (filtro básico conforme matéria)
+   * Busca por fornecedor
    */
   static async findByFornecedor(req: Request, res: Response) {
     try {
       const { fornecedorId } = req.params;
       const medicamentos = await MedicamentoController.medicamentoService.findByFornecedor(fornecedorId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!medicamentos || medicamentos.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum medicamento encontrado para o fornecedor '${fornecedorId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por fornecedor realizada',
+        message: `${medicamentos.length} medicamento(s) encontrado(s) para o fornecedor`,
         data: medicamentos
       });
     } catch (error: any) {
