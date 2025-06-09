@@ -180,9 +180,18 @@ export class ControleEstoqueController {
       const { medicoId } = req.params;
       const controles = await ControleEstoqueController.controleEstoqueService.findByMedico(medicoId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado para o médico '${medicoId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por médico realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) para o médico`,
         data: controles
       });
     } catch (error: any) {
@@ -202,9 +211,18 @@ export class ControleEstoqueController {
       const { pacienteId } = req.params;
       const controles = await ControleEstoqueController.controleEstoqueService.findByPaciente(pacienteId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado para o paciente '${pacienteId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por paciente realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) para o paciente`,
         data: controles
       });
     } catch (error: any) {
@@ -231,9 +249,19 @@ export class ControleEstoqueController {
       }
       
       const controles = await ControleEstoqueController.controleEstoqueService.findByStatus(status as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!controles || controles.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum controle de estoque encontrado com status '${status}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por status realizada',
+        message: `${controles.length} registro(s) de controle encontrado(s) com status '${status}'`,
         data: controles
       });
     } catch (error: any) {

@@ -148,9 +148,19 @@ export class PacienteController {
       }
       
       const pacientes = await PacienteController.pacienteService.findByNome(nome as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!pacientes || pacientes.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum paciente encontrado com o nome '${nome}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por nome realizada',
+        message: `${pacientes.length} paciente(s) encontrado(s)`,
         data: pacientes
       });
     } catch (error: any) {

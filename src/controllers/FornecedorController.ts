@@ -148,9 +148,19 @@ export class FornecedorController {
       }
       
       const fornecedores = await FornecedorController.fornecedorService.findByNome(nome as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!fornecedores || fornecedores.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum fornecedor encontrado com o nome '${nome}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por nome realizada',
+        message: `${fornecedores.length} fornecedor(es) encontrado(s)`,
         data: fornecedores
       });
     } catch (error: any) {
@@ -170,9 +180,18 @@ export class FornecedorController {
       const { status } = req.params;
       const fornecedores = await FornecedorController.fornecedorService.findByStatus(status);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!fornecedores || fornecedores.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum fornecedor encontrado com status '${status}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por status realizada',
+        message: `${fornecedores.length} fornecedor(es) encontrado(s) com status '${status}'`,
         data: fornecedores
       });
     } catch (error: any) {

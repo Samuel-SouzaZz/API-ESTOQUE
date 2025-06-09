@@ -142,9 +142,18 @@ export class LoteController {
       const { produtoId } = req.params;
       const lotes = await LoteController.loteService.findByProduto(produtoId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!lotes || lotes.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum lote encontrado para o produto '${produtoId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por produto realizada',
+        message: `${lotes.length} lote(s) encontrado(s) para o produto`,
         data: lotes
       });
     } catch (error: any) {

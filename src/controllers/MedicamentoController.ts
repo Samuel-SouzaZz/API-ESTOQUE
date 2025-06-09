@@ -149,9 +149,19 @@ export class MedicamentoController {
       }
       
       const medicamentos = await MedicamentoController.medicamentoService.findByNome(nome as string);
+      
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!medicamentos || medicamentos.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum medicamento encontrado com o nome '${nome}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por nome realizada',
+        message: `${medicamentos.length} medicamento(s) encontrado(s)`,
         data: medicamentos
       });
     } catch (error: any) {
@@ -171,9 +181,18 @@ export class MedicamentoController {
       const { fornecedorId } = req.params;
       const medicamentos = await MedicamentoController.medicamentoService.findByFornecedor(fornecedorId);
       
+      // Validação seguindo Clean Code - tratamento adequado de casos edge
+      if (!medicamentos || medicamentos.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: `Nenhum medicamento encontrado para o fornecedor '${fornecedorId}'`,
+          data: []
+        });
+      }
+      
       res.json({
         success: true,
-        message: 'Busca por fornecedor realizada',
+        message: `${medicamentos.length} medicamento(s) encontrado(s) para o fornecedor`,
         data: medicamentos
       });
     } catch (error: any) {
