@@ -43,7 +43,6 @@ const authMiddleware = new AuthMiddleware();
  *                     properties:
  *                       id:
  *                         type: string
- *                         format: uuid
  *                       nome:
  *                         type: string
  *                       telefone:
@@ -144,57 +143,8 @@ router.get('/busca/nome', FornecedorController.findByNome);
  */
 router.get('/status/:status', FornecedorController.findByStatus);
 
+// Listar todos os fornecedores
 router.get('/', FornecedorController.findAll);
-
-/**
- * @swagger
- * /api/fornecedores/{id}:
- *   get:
- *     tags:
- *       - Fornecedores
- *     summary: Buscar fornecedor por ID
- *     description: Retorna um fornecedor específico pelo ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         description: ID do fornecedor
- *     responses:
- *       200:
- *         description: Fornecedor encontrado
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       format: uuid
- *                     nome:
- *                       type: string
- *                     telefone:
- *                       type: string
- *                     status:
- *                       type: string
- *                       enum: [DISPONIVEL, INDISPONIVEL]
- *                     created_at:
- *                       type: string
- *                       format: date-time
- *                     updated_at:
- *                       type: string
- *                       format: date-time
- *       404:
- *         description: Fornecedor não encontrado
- */
-router.get('/:id', FornecedorController.findById);
 
 /**
  * @swagger
@@ -245,7 +195,6 @@ router.get('/:id', FornecedorController.findById);
  *                   properties:
  *                     id:
  *                       type: string
- *                       format: uuid
  *                     nome:
  *                       type: string
  *                     telefone:
@@ -262,6 +211,49 @@ router.post('/', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, F
 /**
  * @swagger
  * /api/fornecedores/{id}:
+ *   get:
+ *     tags:
+ *       - Fornecedores
+ *     summary: Buscar fornecedor por ID
+ *     description: Retorna um fornecedor específico pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do fornecedor
+ *         example: "5"
+ *     responses:
+ *       200:
+ *         description: Fornecedor encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     nome:
+ *                       type: string
+ *                     telefone:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                       enum: [DISPONIVEL, INDISPONIVEL]
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Fornecedor não encontrado
  *   put:
  *     tags:
  *       - Fornecedores
@@ -275,7 +267,6 @@ router.post('/', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, F
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
  *         description: ID do fornecedor
  *     requestBody:
  *       required: true
@@ -303,12 +294,6 @@ router.post('/', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, F
  *         description: Permissão insuficiente
  *       404:
  *         description: Fornecedor não encontrado
- */
-router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, FornecedorController.update);
-
-/**
- * @swagger
- * /api/fornecedores/{id}:
  *   delete:
  *     tags:
  *       - Fornecedores
@@ -322,7 +307,6 @@ router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly,
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
  *         description: ID do fornecedor
  *     responses:
  *       200:
@@ -334,6 +318,9 @@ router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly,
  *       404:
  *         description: Fornecedor não encontrado
  */
+// IMPORTANTE: Rota /:id deve vir APÓS todas as rotas específicas
+router.get('/:id', FornecedorController.findById);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.farmaceuticoOnly, FornecedorController.update);
 router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, FornecedorController.delete);
 
 export default router; 

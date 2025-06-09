@@ -45,7 +45,6 @@ const authMiddleware = new AuthMiddleware();
  *                     properties:
  *                       id:
  *                         type: string
- *                         format: uuid
  *                       nome:
  *                         type: string
  *                       cpf:
@@ -82,8 +81,8 @@ router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, P
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
  *         description: ID do paciente
+ *         example: "2"
  *     responses:
  *       200:
  *         description: Paciente encontrado
@@ -99,7 +98,6 @@ router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, P
  *                   properties:
  *                     id:
  *                       type: string
- *                       format: uuid
  *                     nome:
  *                       type: string
  *                     cpf:
@@ -120,7 +118,48 @@ router.get('/', authMiddleware.authenticate, authMiddleware.profissionaisOnly, P
  *       404:
  *         description: Paciente não encontrado
  */
-router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly, PacienteController.findById);
+/**
+ * @swagger
+ * /api/pacientes/busca/nome:
+ *   get:
+ *     tags:
+ *       - Pacientes
+ *     summary: Buscar pacientes por nome
+ *     description: Busca pacientes que contenham o termo no nome
+ *     parameters:
+ *       - in: query
+ *         name: nome
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nome ou parte do nome do paciente
+ *         example: "João"
+ *     responses:
+ *       200:
+ *         description: Pacientes encontrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       nome:
+ *                         type: string
+ *                       cpf:
+ *                         type: string
+ *                       data_nascimento:
+ *                         type: string
+ *                         format: date
+ */
+router.get('/busca/nome', PacienteController.findByNome);
 
 /**
  * @swagger
@@ -171,7 +210,6 @@ router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly
  *                   properties:
  *                     id:
  *                       type: string
- *                       format: uuid
  *                     nome:
  *                       type: string
  *                     cpf:
@@ -191,6 +229,49 @@ router.post('/', authMiddleware.authenticate, authMiddleware.medicoOnly, Pacient
 /**
  * @swagger
  * /api/pacientes/{id}:
+ *   get:
+ *     tags:
+ *       - Pacientes
+ *     summary: Buscar paciente por ID
+ *     description: Retorna um paciente específico pelo ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do paciente
+ *         example: "2"
+ *     responses:
+ *       200:
+ *         description: Paciente encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     nome:
+ *                       type: string
+ *                     cpf:
+ *                       type: string
+ *                     data_nascimento:
+ *                       type: string
+ *                       format: date
+ *       401:
+ *         description: Acesso negado
+ *       403:
+ *         description: Apenas profissionais de saúde
+ *       404:
+ *         description: Paciente não encontrado
  *   put:
  *     tags:
  *       - Pacientes
@@ -204,7 +285,6 @@ router.post('/', authMiddleware.authenticate, authMiddleware.medicoOnly, Pacient
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
  *         description: ID do paciente
  *     requestBody:
  *       required: true
@@ -234,12 +314,6 @@ router.post('/', authMiddleware.authenticate, authMiddleware.medicoOnly, Pacient
  *         description: Paciente não encontrado
  *       409:
  *         description: CPF já em uso por outro paciente
- */
-router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, PacienteController.update);
-
-/**
- * @swagger
- * /api/pacientes/{id}:
  *   delete:
  *     tags:
  *       - Pacientes
@@ -253,7 +327,6 @@ router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, Pacie
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
  *         description: ID do paciente
  *     responses:
  *       200:
@@ -265,49 +338,9 @@ router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, Pacie
  *       404:
  *         description: Paciente não encontrado
  */
+// IMPORTANTE: Rota /:id deve vir APÓS todas as rotas específicas
+router.get('/:id', authMiddleware.authenticate, authMiddleware.profissionaisOnly, PacienteController.findById);
+router.put('/:id', authMiddleware.authenticate, authMiddleware.medicoOnly, PacienteController.update);
 router.delete('/:id', authMiddleware.authenticate, authMiddleware.adminOnly, PacienteController.delete);
-
-/**
- * @swagger
- * /api/pacientes/busca/nome:
- *   get:
- *     tags:
- *       - Pacientes
- *     summary: Buscar pacientes por nome
- *     description: Busca pacientes que contenham o termo no nome
- *     parameters:
- *       - in: query
- *         name: nome
- *         required: true
- *         schema:
- *           type: string
- *         description: Nome ou parte do nome do paciente
- *         example: "João"
- *     responses:
- *       200:
- *         description: Pacientes encontrados
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       nome:
- *                         type: string
- *                       cpf:
- *                         type: string
- *                       data_nascimento:
- *                         type: string
- *                         format: date
- */
-router.get('/busca/nome', PacienteController.findByNome);
 
 export default router; 
