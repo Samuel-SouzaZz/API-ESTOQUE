@@ -1,65 +1,100 @@
-import { db } from '../config/database';
+import { v4 as uuidv4 } from 'uuid';
+import { IBaseRepository } from './BaseRepository';
 import { IUsuario } from '../models/Usuario';
 import { UserRole } from '../models/enums/UserRole';
 
-export class UsuarioRepository {
+/**
+ * Repositório para gerenciamento de Usuários
+ * Implementa operações CRUD básicas conforme conteúdo da disciplina
+ */
+export class UsuarioRepository implements IBaseRepository<IUsuario> {
+  // Simulando um banco de dados em memória para testes
+  private usuarios: IUsuario[] = [];
+
   /**
    * Busca todos os usuários
+   * @returns Promise com lista de usuários
    */
   async findAll(): Promise<IUsuario[]> {
-    return await db('usuarios').select('*').orderBy('created_at', 'desc');
+    return this.usuarios;
   }
 
   /**
    * Busca usuário por ID
+   * @param id ID do usuário
+   * @returns Promise com o usuário encontrado ou null
    */
   async findById(id: string): Promise<IUsuario | null> {
-    const usuario = await db('usuarios').where({ id }).first();
+    const usuario = this.usuarios.find(u => u.id === id);
     return usuario || null;
   }
 
   /**
-   * Busca usuário por email
+   * Busca usuário por email (método específico para autenticação)
+   * @param email Email do usuário
+   * @returns Promise com o usuário encontrado ou null
    */
   async findByEmail(email: string): Promise<IUsuario | null> {
-    const usuario = await db('usuarios').where({ email }).first();
+    const usuario = this.usuarios.find(u => u.email === email);
     return usuario || null;
   }
 
   /**
    * Cria um novo usuário
+   * @param userData Dados do usuário
+   * @returns Promise com o usuário criado
    */
   async create(userData: Partial<IUsuario>): Promise<IUsuario> {
-    const [id] = await db('usuarios').insert({
-      ...userData,
+    const novoUsuario: IUsuario = {
+      id: uuidv4(),
+      nome: userData.nome || '',
+      email: userData.email || '',
+      senha: userData.senha || '',
       role: userData.role || UserRole.PACIENTE,
-      created_at: new Date(),
-      updated_at: new Date()
-    }).returning('id');
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
     
-    const novoUsuario = await this.findById(id);
-    if (!novoUsuario) {
-      throw new Error('Erro ao criar usuário');
-    }
+    this.usuarios.push(novoUsuario);
     return novoUsuario;
   }
 
   /**
    * Atualiza um usuário
+   * @param id ID do usuário
+   * @param userData Dados para atualização
+   * @returns Promise com o usuário atualizado ou null
    */
   async update(id: string, userData: Partial<IUsuario>): Promise<IUsuario | null> {
-    await db('usuarios').where({ id }).update({
+    const index = this.usuarios.findIndex(u => u.id === id);
+    
+    if (index === -1) {
+      return null;
+    }
+    
+    const usuarioAtualizado: IUsuario = {
+      ...this.usuarios[index],
       ...userData,
-      updated_at: new Date()
-    });
-    return await this.findById(id);
+      updatedAt: new Date()
+    };
+    
+    this.usuarios[index] = usuarioAtualizado;
+    return usuarioAtualizado;
   }
 
   /**
-   * Deleta um usuário
+   * Remove um usuário
+   * @param id ID do usuário
+   * @returns Promise com boolean indicando sucesso
    */
   async delete(id: string): Promise<boolean> {
-    const deletedRows = await db('usuarios').where({ id }).del();
-    return deletedRows > 0;
+    const index = this.usuarios.findIndex(u => u.id === id);
+    
+    if (index === -1) {
+      return false;
+    }
+    
+    this.usuarios.splice(index, 1);
+    return true;
   }
 } 

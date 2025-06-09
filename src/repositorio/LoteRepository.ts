@@ -4,7 +4,7 @@ import Lote, { ILote } from '../models/Lote';
 
 /**
  * Repositório para gerenciamento de Lotes de medicamentos
- * Implementa operações CRUD básicas e métodos específicos para lotes
+ * Implementa operações CRUD básicas conforme conteúdo da disciplina
  */
 export class LoteRepository implements IBaseRepository<ILote> {
   // Simulando um banco de dados em memória para testes
@@ -85,7 +85,7 @@ export class LoteRepository implements IBaseRepository<ILote> {
   }
 
   /**
-   * Busca lotes por produto
+   * Busca lotes por produto (filtro básico conforme matéria)
    * @param produtoId ID do produto
    * @returns Promise com lista de lotes do produto
    */
@@ -94,110 +94,25 @@ export class LoteRepository implements IBaseRepository<ILote> {
   }
   
   /**
-   * Busca lotes por fornecedor
-   * @param fornecedorId ID do fornecedor
-   * @returns Promise com lista de lotes do fornecedor
-   */
-  async findByFornecedor(fornecedorId: string): Promise<ILote[]> {
-    return this.lotes.filter(l => l.fornecedorId === fornecedorId);
-  }
-  
-  /**
-   * Busca lotes pelo código
-   * @param codigo Código do lote
-   * @returns Promise com o lote encontrado ou null
-   */
-  async findByCodigo(codigo: string): Promise<ILote | null> {
-    const lote = this.lotes.find(l => l.codigo === codigo);
-    return lote || null;
-  }
-  
-  /**
-   * Busca lotes vencidos
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
+   * Busca lotes vencidos (filtro básico conforme matéria)
    * @returns Promise com lista de lotes vencidos
    */
-  async findLotesVencidos(dataReferencia: Date = new Date()): Promise<ILote[]> {
-    return this.lotes.filter(l => l.dataValidade < dataReferencia);
+  async findLotesVencidos(): Promise<ILote[]> {
+    const hoje = new Date();
+    return this.lotes.filter(l => l.dataValidade < hoje);
   }
   
   /**
-   * Busca lotes próximos do vencimento
-   * @param diasLimite Quantidade de dias limite para o vencimento
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
+   * Busca lotes próximos do vencimento (filtro básico conforme matéria)
    * @returns Promise com lista de lotes próximos do vencimento
    */
-  async findLotesProximosVencimento(
-    diasLimite: number = 30,
-    dataReferencia: Date = new Date()
-  ): Promise<ILote[]> {
-    const dataLimite = new Date(dataReferencia);
-    dataLimite.setDate(dataLimite.getDate() + diasLimite);
+  async findLotesProximosVencimento(): Promise<ILote[]> {
+    const hoje = new Date();
+    const em30Dias = new Date();
+    em30Dias.setDate(hoje.getDate() + 30);
     
     return this.lotes.filter(l => 
-      l.dataValidade > dataReferencia && l.dataValidade <= dataLimite
+      l.dataValidade > hoje && l.dataValidade <= em30Dias
     );
-  }
-  
-  /**
-   * Busca lotes com quantidade disponível
-   * @param quantidadeMinima Quantidade mínima disponível
-   * @returns Promise com lista de lotes com quantidade disponível
-   */
-  async findLotesDisponiveis(quantidadeMinima: number = 1): Promise<ILote[]> {
-    return this.lotes.filter(l => l.quantidade >= quantidadeMinima);
-  }
-  
-  /**
-   * Verifica se um lote específico está vencido
-   * @param id ID do lote
-   * @param dataReferencia Data de referência para verificação (padrão: data atual)
-   * @returns Promise com boolean indicando se o lote está vencido
-   */
-  async verificarVencimento(id: string, dataReferencia: Date = new Date()): Promise<boolean> {
-    const lote = await this.findById(id);
-    
-    if (!lote) {
-      throw new Error('Lote não encontrado');
-    }
-    
-    return lote.dataValidade < dataReferencia;
-  }
-  
-  /**
-   * Atualiza a quantidade de um lote
-   * @param id ID do lote
-   * @param quantidade Nova quantidade ou quantidade a adicionar/subtrair
-   * @param operacao Tipo de operação ('substituir', 'adicionar', 'subtrair')
-   * @returns Promise com o lote atualizado ou null
-   */
-  async atualizarQuantidade(
-    id: string, 
-    quantidade: number, 
-    operacao: 'substituir' | 'adicionar' | 'subtrair' = 'substituir'
-  ): Promise<ILote | null> {
-    const lote = await this.findById(id);
-    
-    if (!lote) {
-      return null;
-    }
-    
-    let novaQuantidade: number;
-    
-    switch (operacao) {
-      case 'adicionar':
-        novaQuantidade = lote.quantidade + quantidade;
-        break;
-      case 'subtrair':
-        novaQuantidade = lote.quantidade - quantidade;
-        if (novaQuantidade < 0) {
-          throw new Error('Quantidade insuficiente no lote');
-        }
-        break;
-      default: // substituir
-        novaQuantidade = quantidade;
-    }
-    
-    return this.update(id, { quantidade: novaQuantidade });
   }
 } 
