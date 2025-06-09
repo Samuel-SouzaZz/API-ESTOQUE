@@ -1,5 +1,6 @@
 /**
  * Arquivo para centralizar e facilitar a exportação dos repositórios
+ * Conforme conteúdo da disciplina Desenvolvimento Web Back-end I
  */
 import { IBaseRepository } from './BaseRepository';
 import { MedicamentoRepository } from './MedicamentoRepository';
@@ -23,7 +24,7 @@ export {
 };
 
 /**
- * Função para criar instâncias dos repositórios
+ * Função para criar instâncias dos repositórios (padrão básico)
  * Facilita a obtenção de instâncias únicas para uso nos serviços e controllers
  */
 export const createRepositories = () => {
@@ -38,5 +39,5 @@ export const createRepositories = () => {
   };
 };
 
-// Repositórios singleton para uso global
+// Repositórios singleton para uso global (padrão simples)
 export const repositories = createRepositories(); 

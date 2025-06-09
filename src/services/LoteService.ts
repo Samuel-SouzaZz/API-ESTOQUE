@@ -3,7 +3,11 @@ import { repositories } from '../repositorio';
 
 /**
  * Serviço para gerenciamento de Lotes
+<<<<<<< HEAD
+ * Implementa a lógica de negócios básica conforme conteúdo da disciplina
+=======
  * Implementa a lógica de negócios
+>>>>>>> 0a1e485a98b23f75eff342694de62ccfe0f8884d
  */
 export class LoteService {
   /**
@@ -24,7 +28,11 @@ export class LoteService {
    * Cria um novo lote
    */
   async create(data: Partial<ILote>): Promise<ILote> {
+<<<<<<< HEAD
+    // Validação básica conforme matéria
+=======
     // Validações obrigatórias
+>>>>>>> 0a1e485a98b23f75eff342694de62ccfe0f8884d
     if (!data.produtoId) {
       throw new Error('Produto é obrigatório');
     }
